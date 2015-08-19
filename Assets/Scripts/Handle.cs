@@ -3,6 +3,9 @@
 public class Handle : MonoBehaviour
 {
     [SerializeField]
+    private Color gizmosColor = Color.red;
+
+    [SerializeField]
     private ControlPoint start;
 
     [SerializeField]
@@ -36,9 +39,21 @@ public class Handle : MonoBehaviour
         }
     }
 
+    public Color GizmosColor
+    {
+        get
+        {
+            return this.gizmosColor;
+        }
+        set
+        {
+            this.gizmosColor = value;
+        }
+    }
+
     protected virtual void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = this.GizmosColor;
         Gizmos.DrawLine(this.Start.Position, this.End.Position);
     }
 }

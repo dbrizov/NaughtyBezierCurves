@@ -2,6 +2,11 @@
 
 public class ControlPoint : MonoBehaviour
 {
+    [SerializeField]
+    private Color gizmosColor = Color.red;
+
+    public bool IsPointOnCurve { get; set; }
+
     public Vector3 Position
     {
         get
@@ -10,11 +15,21 @@ public class ControlPoint : MonoBehaviour
         }
     }
 
-    public bool IsPointOnCurve { get; set; }
+    public Color GizmosColor
+    {
+        get
+        {
+            return this.gizmosColor;
+        }
+        set
+        {
+            this.gizmosColor = value;
+        }
+    }
 
     protected virtual void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = this.GizmosColor;
         Gizmos.DrawSphere(this.transform.position, 0.1f);
     }
 }
