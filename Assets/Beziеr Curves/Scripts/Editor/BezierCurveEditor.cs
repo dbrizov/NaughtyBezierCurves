@@ -9,13 +9,14 @@ public class BezierCurveEditor : Editor
     [MenuItem("GameObject/Create Other/Bezier Curve")]
     private static void CreateBezeirCurve()
     {
+        GameObject bezierCurve = new GameObject("Bezier Curve", typeof(BezierCurve));
+
         Vector3 position = Vector3.zero;
         if (Camera.current != null)
         {
             position = Camera.current.transform.position + Camera.current.transform.forward * 10f;
         }
 
-        GameObject bezierCurve = new GameObject("Bezier Curve", typeof(BezierCurve));
         bezierCurve.transform.position = position;
     }
 
@@ -26,9 +27,9 @@ public class BezierCurveEditor : Editor
 
     protected virtual void OnSceneGUI()
     {
-        this.bezierCurve.StartPointWorldPosition = Handles.DoPositionHandle(this.bezierCurve.StartPointWorldPosition, Quaternion.identity);
-        this.bezierCurve.EndPointWorldPosition = Handles.DoPositionHandle(this.bezierCurve.EndPointWorldPosition, Quaternion.identity);        
-        this.bezierCurve.StartTangentWorldPosition = Handles.DoPositionHandle(this.bezierCurve.StartTangentWorldPosition, Quaternion.identity);
-        this.bezierCurve.EndTangentWorldPosition = Handles.DoPositionHandle(this.bezierCurve.EndTangentWorldPosition, Quaternion.identity);
+        this.bezierCurve.StartPointWorldPosition = Handles.PositionHandle(this.bezierCurve.StartPointWorldPosition, Quaternion.identity);
+        this.bezierCurve.EndPointWorldPosition = Handles.PositionHandle(this.bezierCurve.EndPointWorldPosition, Quaternion.identity);
+        this.bezierCurve.StartTangentWorldPosition = Handles.PositionHandle(this.bezierCurve.StartTangentWorldPosition, Quaternion.identity);
+        this.bezierCurve.EndTangentWorldPosition = Handles.PositionHandle(this.bezierCurve.EndTangentWorldPosition, Quaternion.identity);
     }
 }

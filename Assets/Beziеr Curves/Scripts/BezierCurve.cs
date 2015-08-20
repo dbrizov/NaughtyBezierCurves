@@ -119,6 +119,30 @@ public class BezierCurve : MonoBehaviour
         }
     }
 
+    public Vector3 Evaluate(float time)
+    {
+        Vector3 result = BezierCurve.Evaluate(
+            time, this.StartPointWorldPosition, this.EndPointWorldPosition, this.StartTangentWorldPosition, this.EndTangentWorldPosition);
+
+        return result;
+    }
+
+    public static Vector3 Evaluate(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+    {
+        float u = 1f - time;
+        float tt = time * time;
+        float uu = u * u;
+        float uuu = uu * u;
+        float ttt = tt * time;
+
+        Vector3 result = uuu * startPosition; // first term
+        result += 3 * uu * time * startTangent; // second term
+        result += 3 * u * tt * endTangent; // third term
+        result += ttt * endPosition; // fourth term
+
+        return result;
+    }
+
     protected virtual void OnDrawGizmos()
     {
         // Draw the curve
@@ -147,29 +171,5 @@ public class BezierCurve : MonoBehaviour
         Gizmos.DrawSphere(this.EndPointWorldPosition, 0.075f);
         Gizmos.DrawSphere(this.EndTangentWorldPosition, 0.075f);
         Gizmos.DrawLine(this.EndPointWorldPosition, this.EndTangentWorldPosition);
-    }
-
-    public Vector3 Evaluate(float time)
-    {
-        Vector3 result = BezierCurve.Evaluate(
-            time, this.StartPointWorldPosition, this.EndPointWorldPosition, this.StartTangentWorldPosition, this.EndTangentWorldPosition);
-
-        return result;
-    }
-
-    public static Vector3 Evaluate(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
-    {
-        float u = 1f - time;
-        float tt = time * time;
-        float uu = u * u;
-        float uuu = uu * u;
-        float ttt = tt * time;
-
-        Vector3 result = uuu * startPosition; // first term
-        result += 3 * uu * time * startTangent; // second term
-        result += 3 * u * tt * endTangent; // third term
-        result += ttt * endPosition; // fourth term
-
-        return result;
     }
 }
