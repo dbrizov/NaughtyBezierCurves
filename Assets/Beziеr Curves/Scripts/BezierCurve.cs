@@ -7,12 +7,20 @@ namespace BezierCurves
     {
         // Serializable Fields
         [SerializeField]
-        [Tooltip("The color used to render the curve in the scene")]
-        private Color color = Color.green;
+        [Tooltip("The color used to render the curve")]
+        private Color curveColor = Color.green;
+
+        [SerializeField]
+        [Tooltip("The color used to render the start point of the curve")]
+        private Color startPointColor = Color.red;
+
+        [SerializeField]
+        [Tooltip("The color used to render the end point of the curve")]
+        private Color endPointColor = Color.blue;
 
         [SerializeField]
         [Tooltip("Used only for scene rendering")]
-        private int antiAliasing = 50;
+        private int antiAliasing = 3;
 
         [SerializeField]
         [Tooltip("How precise are the calculations")]
@@ -38,7 +46,13 @@ namespace BezierCurves
         {
             get
             {
-                return this.points.Count;
+                int pointsCount = 0;
+                if (this.points != null)
+                {
+                    pointsCount = this.points.Count;
+                }
+
+                return pointsCount;
             }
         }
 
@@ -57,37 +71,52 @@ namespace BezierCurves
         }
 
         // Unity Methods
-        //protected virtual void Update()
-        //{
-        //    Debug.Log(this.ApproximateLength);
-        //}
-
         protected virtual void OnDrawGizmos()
         {
-            // Draw the curve
             if (this.PointsCount > 1)
             {
-                Gizmos.color = this.color;
+                // Draw the curve
+                Gizmos.color = this.curveColor;
                 Vector3 fromPoint = this.Evaluate(0f);
-                for (int i = 0; i < this.antiAliasing; i++)
+                int drawSegmentsCount = (int)(this.antiAliasing * this.ApproximateLength);
+
+                for (int i = 0; i < drawSegmentsCount; i++)
                 {
-                    float time = (i + 1) / (float)this.antiAliasing;
+                    float time = (i + 1) / (float)drawSegmentsCount;
                     Vector3 toPoint = this.Evaluate(time);
                     Gizmos.DrawLine(fromPoint, toPoint);
                     fromPoint = toPoint;
                 }
+
+                // Draw the start and the end of the curve indicators
+                Gizmos.color = this.startPointColor;
+                Gizmos.DrawSphere(this.GetPoint(0).Position, 0.0375f);
+
+                Gizmos.color = this.endPointColor;
+                Gizmos.DrawSphere(this.GetPoint(this.PointsCount - 1).Position, 0.0375f);
             }
         }
 
         // Public Methods
-        public void InsertPoint(int index)
+        public BezierPoint AddPoint()
         {
+            return this.InsertPoint(this.PointsCount);
+        }
+
+        public BezierPoint InsertPoint(int index)
+        {
+            if (this.points == null)
+            {
+                this.points = new List<BezierPoint>();
+            }
+
             BezierPoint newPoint = new GameObject("Point" + index, typeof(BezierPoint)).GetComponent<BezierPoint>();
             newPoint.transform.parent = this.transform;
             newPoint.LocalPosition = Vector3.zero;
             newPoint.Curve = this;
 
             this.points.Insert(index, newPoint);
+            return newPoint;
         }
 
         public BezierPoint GetPoint(int index)
