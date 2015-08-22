@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace BezierCurves
 {
-    [CustomEditor(typeof(BezierPoint))]
+    [CustomEditor(typeof(BezierPoint), true)]
     [CanEditMultipleObjects]
     public class BezierPointEditor : Editor
     {

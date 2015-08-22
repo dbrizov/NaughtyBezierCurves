@@ -20,7 +20,7 @@ namespace BezierCurves
 
         [SerializeField]
         [Tooltip("Used only for scene rendering")]
-        private int antiAliasing = 5;
+        private int antiAliasing = 10;
 
         [SerializeField]
         [Tooltip("How precise are the calculations")]
@@ -64,7 +64,7 @@ namespace BezierCurves
                 float length = 0;
                 for (int i = 0; i < this.PointsCount - 1; i++)
                 {
-                    length += BezierCurve.GetApproximateLengthOfCubicCurve(this.GetPoint(i), this.GetPoint(i + 1), this.Precision);
+                    length += BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], this.Precision);
                 }
 
                 return length;
@@ -91,33 +91,67 @@ namespace BezierCurves
 
                 // Draw the start and the end of the curve indicators
                 Gizmos.color = this.startPointColor;
-                Gizmos.DrawSphere(this.GetPoint(0).Position, 0.05f);
+                Gizmos.DrawSphere(this.points[0].Position, 0.05f);
 
                 Gizmos.color = this.endPointColor;
-                Gizmos.DrawSphere(this.GetPoint(this.PointsCount - 1).Position, 0.05f);
+                Gizmos.DrawSphere(this.points[this.PointsCount - 1].Position, 0.05f);
             }
         }
 
         // Public Methods
         public BezierPoint AddPoint()
         {
-            return this.InsertPoint(this.PointsCount);
+            return this.AddPointAt(this.PointsCount);
         }
 
-        public BezierPoint InsertPoint(int index)
+        public BezierPoint AddPointAt(int index)
         {
             if (this.points == null)
             {
                 this.points = new List<BezierPoint>();
             }
 
-            BezierPoint newPoint = new GameObject("Point" + index, typeof(BezierPoint)).GetComponent<BezierPoint>();
+            BezierPoint newPoint = new GameObject("Point " + this.points.Count, typeof(BezierPoint)).GetComponent<BezierPoint>();
             newPoint.transform.parent = this.transform;
             newPoint.LocalPosition = Vector3.zero;
             newPoint.Curve = this;
 
             this.points.Insert(index, newPoint);
+
             return newPoint;
+        }
+
+        public bool RemovePoint(BezierPoint point)
+        {
+            bool removed = this.points.Remove(point);
+            if (removed)
+            {
+                if (!Application.isPlaying)
+                {
+                    DestroyImmediate(point.gameObject);
+                }
+                else
+                {
+                    Destroy(point.gameObject);
+                }
+            }
+
+            return removed;
+        }
+
+        public void RemovePointAt(int index)
+        {
+            var point = this.points[index];
+            this.points.RemoveAt(index);
+
+            if (!Application.isPlaying)
+            {
+                DestroyImmediate(point.gameObject);
+            }
+            else
+            {
+                Destroy(point.gameObject);
+            }
         }
 
         public BezierPoint GetPoint(int index)
@@ -129,11 +163,11 @@ namespace BezierCurves
         {
             if (time < 0.01f)
             {
-                return this.GetPoint(0).Position;
+                return this.points[0].Position;
             }
             else if (Mathf.Abs(time - 1f) < 0.01f)
             {
-                return this.GetPoint(this.PointsCount - 1).Position;
+                return this.points[this.PointsCount - 1].Position;
             }
 
             // The evaluated points is between these two points
@@ -145,11 +179,11 @@ namespace BezierCurves
 
             for (int i = 0; i < this.PointsCount - 1; i++)
             {
-                subCurveTime = BezierCurve.GetApproximateLengthOfCubicCurve(this.GetPoint(i), this.GetPoint(i + 1)) / approximateLength;
+                subCurveTime = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1]) / approximateLength;
                 if (subCurveTime + totalTime > time)
                 {
-                    startPoint = this.GetPoint(i);
-                    endPoint = this.GetPoint(i + 1);
+                    startPoint = this.points[i];
+                    endPoint = this.points[i + 1];
 
                     break;
                 }
