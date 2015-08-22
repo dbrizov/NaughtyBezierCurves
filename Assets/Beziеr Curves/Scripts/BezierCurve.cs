@@ -20,13 +20,14 @@ namespace BezierCurves
 
         [SerializeField]
         [Tooltip("Used only for scene rendering")]
-        private int antiAliasing = 3;
+        private int antiAliasing = 5;
 
         [SerializeField]
         [Tooltip("How precise are the calculations")]
         private int precision = 25;
 
         [SerializeField]
+        [HideInInspector]
         private List<BezierPoint> points = null;
 
         // Properties
@@ -90,10 +91,10 @@ namespace BezierCurves
 
                 // Draw the start and the end of the curve indicators
                 Gizmos.color = this.startPointColor;
-                Gizmos.DrawSphere(this.GetPoint(0).Position, 0.0375f);
+                Gizmos.DrawSphere(this.GetPoint(0).Position, 0.05f);
 
                 Gizmos.color = this.endPointColor;
-                Gizmos.DrawSphere(this.GetPoint(this.PointsCount - 1).Position, 0.0375f);
+                Gizmos.DrawSphere(this.GetPoint(this.PointsCount - 1).Position, 0.05f);
             }
         }
 

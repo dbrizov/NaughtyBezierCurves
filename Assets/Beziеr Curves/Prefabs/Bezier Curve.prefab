@@ -100,7 +100,7 @@ MonoBehaviour:
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   startPointColor: {r: 1, g: 0, b: 0, a: 1}
   endPointColor: {r: 0, g: 0, b: 1, a: 1}
-  antiAliasing: 3
+  antiAliasing: 5
   precision: 25
   points:
   - {fileID: 11441840}
@@ -144,7 +144,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: antiAliasing
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
