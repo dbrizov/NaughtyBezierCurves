@@ -27,6 +27,13 @@ namespace BezierCurves
 
             curve.transform.position = position;
 
+            BezierCurveEditor.AddDefaultPoints(curve);
+
+            Selection.activeGameObject = curve.gameObject;
+        }
+
+        private static void AddDefaultPoints(BezierCurve curve)
+        {
             BezierPoint startPoint = curve.AddPoint();
             startPoint.LocalPosition = new Vector3(-1f, 0f, 0f);
             startPoint.LeftHandleLocalPosition = new Vector3(-0.25f, -0.25f, 0f);
@@ -34,15 +41,22 @@ namespace BezierCurves
             BezierPoint endPoint = curve.AddPoint();
             endPoint.LocalPosition = new Vector3(1f, 0f, 0f);
             endPoint.LeftHandleLocalPosition = new Vector3(-0.25f, 0.25f, 0f);
-
-            Selection.activeGameObject = curve.gameObject;
         }
 
         protected virtual void OnEnable()
         {
             this.curve = (BezierCurve)this.target;
-            this.points = new ReorderableList(this.serializedObject, serializedObject.FindProperty("points"), true, true, false, false);
+            if (curve.PointsCount < 2)
+            {
+                while (curve.PointsCount != 0)
+                {
+                    curve.RemovePointAt(this.curve.PointsCount - 1);
+                }
 
+                BezierCurveEditor.AddDefaultPoints(this.curve);
+            }
+
+            this.points = new ReorderableList(this.serializedObject, serializedObject.FindProperty("points"), true, true, false, false);
             this.points.drawElementCallback = this.DrawElementCallback;
             this.points.drawHeaderCallback =
                 (Rect rect) =>
@@ -79,6 +93,11 @@ namespace BezierCurves
                 }
             }
 
+            if (GUILayout.Button("Log Length"))
+            {
+                Debug.Log(this.curve.ApproximateLength);
+            }
+
             this.serializedObject.ApplyModifiedProperties();
         }
 
@@ -96,6 +115,7 @@ namespace BezierCurves
                     continue;
                 }
 
+                BezierPointEditor.handleCapSize = BezierPointEditor.CircleCapSize;
                 BezierPointEditor.DrawPointSceneGUI(curve.GetPoint(i));
             }
         }
@@ -130,9 +150,12 @@ namespace BezierCurves
             }
 
             // Draw remove button
-            if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
+            if (this.curve.PointsCount > 2)
             {
-                this.curve.RemovePointAt(index);
+                if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
+                {
+                    this.curve.RemovePointAt(index);
+                }
             }
         }
     }

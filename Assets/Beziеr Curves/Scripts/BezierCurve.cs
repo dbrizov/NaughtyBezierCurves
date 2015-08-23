@@ -112,9 +112,10 @@ namespace BezierCurves
             }
 
             BezierPoint newPoint = new GameObject("Point " + this.points.Count, typeof(BezierPoint)).GetComponent<BezierPoint>();
-            newPoint.transform.parent = this.transform;
-            newPoint.LocalPosition = Vector3.zero;
             newPoint.Curve = this;
+            newPoint.transform.parent = this.transform;
+            newPoint.transform.localRotation = Quaternion.identity;
+            newPoint.LocalPosition = Vector3.zero;
 
             this.points.Insert(index, newPoint);
 
@@ -123,6 +124,11 @@ namespace BezierCurves
 
         public bool RemovePoint(BezierPoint point)
         {
+            if (this.PointsCount < 2)
+            {
+                return false;
+            }
+
             bool removed = this.points.Remove(point);
             if (removed)
             {
@@ -139,8 +145,13 @@ namespace BezierCurves
             return removed;
         }
 
-        public void RemovePointAt(int index)
+        public bool RemovePointAt(int index)
         {
+            if (this.PointsCount < 2)
+            {
+                return false;
+            }
+
             var point = this.points[index];
             this.points.RemoveAt(index);
 
@@ -152,6 +163,8 @@ namespace BezierCurves
             {
                 Destroy(point.gameObject);
             }
+
+            return true;
         }
 
         public BezierPoint GetPoint(int index)
@@ -173,14 +186,15 @@ namespace BezierCurves
             // The evaluated points is between these two points
             BezierPoint startPoint = null;
             BezierPoint endPoint = null;
-            float subCurveTime = 0f;
-            float totalTime = 0f;
+            float subCurvePercent = 0f;
+            float totalPercent = 0f;
             float approximateLength = this.ApproximateLength;
+            int subCurvesPrecision = (this.Precision / (this.PointsCount - 1)) + 1;
 
             for (int i = 0; i < this.PointsCount - 1; i++)
             {
-                subCurveTime = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1]) / approximateLength;
-                if (subCurveTime + totalTime > time)
+                subCurvePercent = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], subCurvesPrecision) / approximateLength;
+                if (subCurvePercent + totalPercent > time)
                 {
                     startPoint = this.points[i];
                     endPoint = this.points[i + 1];
@@ -188,11 +202,20 @@ namespace BezierCurves
                     break;
                 }
 
-                totalTime += subCurveTime;
+                totalPercent += subCurvePercent;
             }
 
-            float timeMappedToSubCurve = ((time - totalTime) / subCurveTime);
-            return BezierCurve.EvaluateCubicCurve(timeMappedToSubCurve, startPoint, endPoint);
+            
+            if (endPoint == null)
+            {
+                // If the evaluated point is very near to the end of the curve, return the end point
+                return this.points[this.PointsCount - 1].Position;
+            }
+            else
+            {
+                float timeMappedToSubCurve = ((time - totalPercent) / subCurvePercent);
+                return BezierCurve.EvaluateCubicCurve(timeMappedToSubCurve, startPoint, endPoint);
+            }
         }
 
         public static Vector3 EvaluateCubicCurve(float time, BezierPoint startPoint, BezierPoint endPoint)

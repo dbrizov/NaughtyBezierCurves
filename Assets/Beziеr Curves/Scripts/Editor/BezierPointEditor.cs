@@ -7,9 +7,9 @@ namespace BezierCurves
     [CanEditMultipleObjects]
     public class BezierPointEditor : Editor
     {
-        private const float CircleCapSize = 0.075f;
-        private const float RectangeCapSize = 0.1f;
-        private const float SphereCapSize = 0.15f;
+        public const float CircleCapSize = 0.075f;
+        public const float RectangeCapSize = 0.1f;
+        public const float SphereCapSize = 0.15f;
 
         public static float pointCapSize = RectangeCapSize;
         public static float handleCapSize = CircleCapSize;
@@ -61,7 +61,6 @@ namespace BezierCurves
 
         public static void DrawPointSceneGUI(BezierPoint point)
         {
-            BezierPointEditor.handleCapSize = BezierPointEditor.CircleCapSize;
             DrawPointSceneGUI(point, Handles.RectangleCap, Handles.CircleCap);
         }
 
