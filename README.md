@@ -1,5 +1,5 @@
 # Unity-BezierCurves
-**Bezier Curve Game Object for Unity Engine**
+**Bezier Curve Game Object for Unity**
 
 You can create a Bezier Curve game object in 3 ways: <br />
 1. From the Top Menu -> GameObjects -> Create Other -> Bezier Curve <br />
