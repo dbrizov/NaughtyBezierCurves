@@ -20,10 +20,10 @@ namespace BezierCurves
 
         [SerializeField]
         [Tooltip("Used only for scene rendering")]
-        private int antiAliasing = 10;
+        private int renderSampling = 50;
 
         [SerializeField]
-        [Tooltip("How precise are the calculations")]
+        [Tooltip("How precise are the calculations. The default value is good for calculations and performance")]
         private int precision = 25;
 
         [SerializeField]
@@ -79,11 +79,10 @@ namespace BezierCurves
                 // Draw the curve
                 Gizmos.color = this.curveColor;
                 Vector3 fromPoint = this.Evaluate(0f);
-                int drawSegmentsCount = (int)(this.antiAliasing * this.ApproximateLength);
 
-                for (int i = 0; i < drawSegmentsCount; i++)
+                for (int i = 0; i < this.renderSampling; i++)
                 {
-                    float time = (i + 1) / (float)drawSegmentsCount;
+                    float time = (i + 1) / (float)this.renderSampling;
                     Vector3 toPoint = this.Evaluate(time);
                     Gizmos.DrawLine(fromPoint, toPoint);
                     fromPoint = toPoint;
@@ -115,8 +114,27 @@ namespace BezierCurves
             newPoint.Curve = this;
             newPoint.transform.parent = this.transform;
             newPoint.transform.localRotation = Quaternion.identity;
-            newPoint.LocalPosition = Vector3.zero;
 
+            if (this.PointsCount == 0 || this.PointsCount == 1)
+            {
+                newPoint.LocalPosition = Vector3.zero;
+            }
+            else
+            {
+                if (index == 0)
+                {
+                    newPoint.Position = (this.points[0].Position - this.points[1].Position).normalized + this.points[0].Position;
+                }
+                else if (index == this.PointsCount)
+                {
+                    newPoint.Position = (this.points[index - 1].Position - this.points[index - 2].Position).normalized + this.points[index - 1].Position;
+                }
+                else
+                {
+                    newPoint.Position = BezierCurve.EvaluateCubicCurve(0.5f, this.points[index - 1], this.points[index]);
+                }
+            }
+            
             this.points.Insert(index, newPoint);
 
             return newPoint;
@@ -189,11 +207,11 @@ namespace BezierCurves
             float subCurvePercent = 0f;
             float totalPercent = 0f;
             float approximateLength = this.ApproximateLength;
-            int subCurvesPrecision = (this.Precision / (this.PointsCount - 1)) + 1;
+            int subCurvesSampling = (this.Precision / (this.PointsCount - 1)) + 1;
 
             for (int i = 0; i < this.PointsCount - 1; i++)
             {
-                subCurvePercent = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], subCurvesPrecision) / approximateLength;
+                subCurvePercent = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], subCurvesSampling) / approximateLength;
                 if (subCurvePercent + totalPercent > time)
                 {
                     startPoint = this.points[i];
@@ -213,8 +231,8 @@ namespace BezierCurves
             }
             else
             {
-                float timeMappedToSubCurve = ((time - totalPercent) / subCurvePercent);
-                return BezierCurve.EvaluateCubicCurve(timeMappedToSubCurve, startPoint, endPoint);
+                float timeRelativeToSubCurve = ((time - totalPercent) / subCurvePercent);
+                return BezierCurve.EvaluateCubicCurve(timeRelativeToSubCurve, startPoint, endPoint);
             }
         }
 
@@ -248,19 +266,19 @@ namespace BezierCurves
             return result;
         }
 
-        public static float GetApproximateLengthOfCubicCurve(BezierPoint startPoint, BezierPoint endPoint, int precision = 10)
+        public static float GetApproximateLengthOfCubicCurve(BezierPoint startPoint, BezierPoint endPoint, int sampling = 10)
         {
-            return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, precision);
+            return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, sampling);
         }
 
-        public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int precision = 10)
+        public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling = 10)
         {
             float length = 0f;
             Vector3 fromPoint = EvaluateCubicCurve(0f, startPosition, endPosition, startTangent, endTangent);
 
-            for (int i = 0; i < precision; i++)
+            for (int i = 0; i < sampling; i++)
             {
-                float time = (i + 1) / (float)precision;
+                float time = (i + 1) / (float)sampling;
                 Vector3 toPoint = EvaluateCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
                 length += Vector3.Distance(fromPoint, toPoint);
                 fromPoint = toPoint;

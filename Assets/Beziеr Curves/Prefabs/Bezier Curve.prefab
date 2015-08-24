@@ -130,7 +130,7 @@ MonoBehaviour:
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   startPointColor: {r: 1, g: 0, b: 0, a: 1}
   endPointColor: {r: 0, g: 0, b: 1, a: 1}
-  antiAliasing: 10
+  renderSampling: 50
   precision: 25
   points:
   - {fileID: 11468082}
@@ -141,7 +141,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: renderSampling
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 115002}
