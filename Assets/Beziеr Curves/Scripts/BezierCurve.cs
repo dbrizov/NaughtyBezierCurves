@@ -28,7 +28,7 @@ namespace BezierCurves
 
         [SerializeField]
         [HideInInspector]
-        private List<BezierPoint> points = null;
+        private List<BezierPoint> keyPoints = new List<BezierPoint>();
 
         // Properties
         public int Precision
@@ -43,17 +43,19 @@ namespace BezierCurves
             }
         }
 
-        public int PointsCount
+        public List<BezierPoint> KeyPoints
         {
             get
             {
-                int pointsCount = 0;
-                if (this.points != null)
-                {
-                    pointsCount = this.points.Count;
-                }
+                return this.keyPoints;
+            }
+        }
 
-                return pointsCount;
+        public int KeyPointsCount
+        {
+            get
+            {
+                return this.keyPoints.Count;
             }
         }
 
@@ -62,9 +64,9 @@ namespace BezierCurves
             get
             {
                 float length = 0;
-                for (int i = 0; i < this.PointsCount - 1; i++)
+                for (int i = 0; i < this.KeyPointsCount - 1; i++)
                 {
-                    length += BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], this.Precision);
+                    length += BezierCurve.GetApproximateLengthOfCubicCurve(this.keyPoints[i], this.keyPoints[i + 1], this.Precision);
                 }
 
                 return length;
@@ -74,7 +76,7 @@ namespace BezierCurves
         // Unity Methods
         protected virtual void OnDrawGizmos()
         {
-            if (this.PointsCount > 1)
+            if (this.KeyPointsCount > 1)
             {
                 // Draw the curve
                 Gizmos.color = this.curveColor;
@@ -90,32 +92,27 @@ namespace BezierCurves
 
                 // Draw the start and the end of the curve indicators
                 Gizmos.color = this.startPointColor;
-                Gizmos.DrawSphere(this.points[0].Position, 0.05f);
+                Gizmos.DrawSphere(this.keyPoints[0].Position, 0.05f);
 
                 Gizmos.color = this.endPointColor;
-                Gizmos.DrawSphere(this.points[this.PointsCount - 1].Position, 0.05f);
+                Gizmos.DrawSphere(this.keyPoints[this.KeyPointsCount - 1].Position, 0.05f);
             }
         }
 
         // Public Methods
-        public BezierPoint AddPoint()
+        public BezierPoint AddKeyPoint()
         {
-            return this.AddPointAt(this.PointsCount);
+            return this.AddKeyPointAt(this.KeyPointsCount);
         }
 
-        public BezierPoint AddPointAt(int index)
+        public BezierPoint AddKeyPointAt(int index)
         {
-            if (this.points == null)
-            {
-                this.points = new List<BezierPoint>();
-            }
-
-            BezierPoint newPoint = new GameObject("Point " + this.points.Count, typeof(BezierPoint)).GetComponent<BezierPoint>();
+            BezierPoint newPoint = new GameObject("Point " + this.keyPoints.Count, typeof(BezierPoint)).GetComponent<BezierPoint>();
             newPoint.Curve = this;
             newPoint.transform.parent = this.transform;
             newPoint.transform.localRotation = Quaternion.identity;
 
-            if (this.PointsCount == 0 || this.PointsCount == 1)
+            if (this.KeyPointsCount == 0 || this.KeyPointsCount == 1)
             {
                 newPoint.LocalPosition = Vector3.zero;
             }
@@ -123,82 +120,47 @@ namespace BezierCurves
             {
                 if (index == 0)
                 {
-                    newPoint.Position = (this.points[0].Position - this.points[1].Position).normalized + this.points[0].Position;
+                    newPoint.Position = (this.keyPoints[0].Position - this.keyPoints[1].Position).normalized + this.keyPoints[0].Position;
                 }
-                else if (index == this.PointsCount)
+                else if (index == this.KeyPointsCount)
                 {
-                    newPoint.Position = (this.points[index - 1].Position - this.points[index - 2].Position).normalized + this.points[index - 1].Position;
+                    newPoint.Position = (this.keyPoints[index - 1].Position - this.keyPoints[index - 2].Position).normalized + this.keyPoints[index - 1].Position;
                 }
                 else
                 {
-                    newPoint.Position = BezierCurve.EvaluateCubicCurve(0.5f, this.points[index - 1], this.points[index]);
+                    newPoint.Position = BezierCurve.EvaluateCubicCurve(0.5f, this.keyPoints[index - 1], this.keyPoints[index]);
                 }
             }
-            
-            this.points.Insert(index, newPoint);
+
+            this.keyPoints.Insert(index, newPoint);
 
             return newPoint;
         }
 
-        public bool RemovePoint(BezierPoint point)
+        public bool RemoveKeyPointAt(int index)
         {
-            if (this.PointsCount < 2)
+            if (this.KeyPointsCount < 2)
             {
                 return false;
             }
 
-            bool removed = this.points.Remove(point);
-            if (removed)
-            {
-                if (!Application.isPlaying)
-                {
-                    DestroyImmediate(point.gameObject);
-                }
-                else
-                {
-                    Destroy(point.gameObject);
-                }
-            }
+            var point = this.keyPoints[index];
+            this.keyPoints.RemoveAt(index);
 
-            return removed;
-        }
-
-        public bool RemovePointAt(int index)
-        {
-            if (this.PointsCount < 2)
-            {
-                return false;
-            }
-
-            var point = this.points[index];
-            this.points.RemoveAt(index);
-
-            if (!Application.isPlaying)
-            {
-                DestroyImmediate(point.gameObject);
-            }
-            else
-            {
-                Destroy(point.gameObject);
-            }
+            Destroy(point.gameObject);
 
             return true;
-        }
-
-        public BezierPoint GetPoint(int index)
-        {
-            return this.points[index];
         }
 
         public Vector3 Evaluate(float time)
         {
             if (time < 0.01f)
             {
-                return this.points[0].Position;
+                return this.keyPoints[0].Position;
             }
             else if (Mathf.Abs(time - 1f) < 0.01f)
             {
-                return this.points[this.PointsCount - 1].Position;
+                return this.keyPoints[this.KeyPointsCount - 1].Position;
             }
 
             // The evaluated points is between these two points
@@ -207,15 +169,15 @@ namespace BezierCurves
             float subCurvePercent = 0f;
             float totalPercent = 0f;
             float approximateLength = this.ApproximateLength;
-            int subCurvesSampling = (this.Precision / (this.PointsCount - 1)) + 1;
+            int subCurvesSampling = (this.Precision / (this.KeyPointsCount - 1)) + 1;
 
-            for (int i = 0; i < this.PointsCount - 1; i++)
+            for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                subCurvePercent = BezierCurve.GetApproximateLengthOfCubicCurve(this.points[i], this.points[i + 1], subCurvesSampling) / approximateLength;
+                subCurvePercent = BezierCurve.GetApproximateLengthOfCubicCurve(this.keyPoints[i], this.keyPoints[i + 1], subCurvesSampling) / approximateLength;
                 if (subCurvePercent + totalPercent > time)
                 {
-                    startPoint = this.points[i];
-                    endPoint = this.points[i + 1];
+                    startPoint = this.keyPoints[i];
+                    endPoint = this.keyPoints[i + 1];
 
                     break;
                 }
@@ -223,11 +185,11 @@ namespace BezierCurves
                 totalPercent += subCurvePercent;
             }
 
-            
+
             if (endPoint == null)
             {
                 // If the evaluated point is very near to the end of the curve, return the end point
-                return this.points[this.PointsCount - 1].Position;
+                return this.keyPoints[this.KeyPointsCount - 1].Position;
             }
             else
             {
