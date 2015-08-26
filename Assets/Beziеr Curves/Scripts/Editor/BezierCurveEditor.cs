@@ -38,11 +38,11 @@ namespace BezierCurves
         {
             BezierPoint startPoint = curve.AddKeyPoint();
             startPoint.LocalPosition = new Vector3(-1f, 0f, 0f);
-            startPoint.LeftHandleLocalPosition = new Vector3(-0.25f, -0.25f, 0f);
+            startPoint.LeftHandleLocalPosition = new Vector3(-0.35f, -0.35f, 0f);
 
             BezierPoint endPoint = curve.AddKeyPoint();
             endPoint.LocalPosition = new Vector3(1f, 0f, 0f);
-            endPoint.LeftHandleLocalPosition = new Vector3(-0.25f, 0.25f, 0f);
+            endPoint.LeftHandleLocalPosition = new Vector3(-0.35f, 0.35f, 0f);
         }
 
         protected virtual void OnEnable()
@@ -64,6 +64,13 @@ namespace BezierCurves
                 (Rect rect) =>
                 {
                     EditorGUI.LabelField(rect, string.Format("Reorderable List | Points: {0}", this.keyPoints.serializedProperty.arraySize));
+                };
+
+            this.keyPoints.onReorderCallback =
+                (ReorderableList list) =>
+                {
+                    Undo.IncrementCurrentGroup();
+                    Undo.RegisterCompleteObjectUndo(this.curve, "Points reorder");
                 };
         }
 
@@ -189,6 +196,7 @@ namespace BezierCurves
                 }
             }
 
+            Undo.IncrementCurrentGroup();
             Undo.RegisterCreatedObjectUndo(newPoint.gameObject, "Create point");
             Undo.RegisterCompleteObjectUndo(curve, "Save curve");
             curve.KeyPoints.Insert(index, newPoint);
@@ -206,6 +214,7 @@ namespace BezierCurves
 
             var point = curve.KeyPoints[index];
 
+            Undo.IncrementCurrentGroup();
             Undo.RegisterCompleteObjectUndo(curve, "Save curve");
             curve.KeyPoints.RemoveAt(index);
             Undo.RegisterCompleteObjectUndo(curve, "Save curve");

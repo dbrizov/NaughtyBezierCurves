@@ -19,10 +19,10 @@ namespace BezierCurves
         private HandleType handleType = HandleType.Connected;
 
         [SerializeField]
-        private Vector3 leftHandleLocalPosition = new Vector3(-0.2f, 0f, 0f);
+        private Vector3 leftHandleLocalPosition = new Vector3(-0.5f, 0f, 0f);
 
         [SerializeField]
-        private Vector3 rightHandleLocalPosition = new Vector3(0.2f, 0f, 0f);
+        private Vector3 rightHandleLocalPosition = new Vector3(0.5f, 0f, 0f);
 
         // Properties
         public BezierCurve Curve
