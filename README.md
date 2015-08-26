@@ -23,6 +23,35 @@ Ways to create a BezierCurve GameObject
 - Right click in the Hierarchy View -> Create Other -> Bezier Curve
 - Drag the prefab in the Scene (The prefab is located in "Assets/Bezier Curves/Prefabs" folder)
 
+Code Examples
+-------------
+
+```C#
+// Evaluate a position along the curve at a given time
+float time = 0.5f; // In range [0, 1]
+Vector3 middlePointPosition = curve.Evaluate(time);
+
+// Add key point at the end of the curve
+BezierPoint keyPoint = curve.AddKeyPoint(); // via fast method
+BezierPoint keyPoint = curve.AddKeyPoint(curve.KeyPointsCount); // via specific index
+
+// Remove key point
+bool isRemoved = curve.RemoveKeyPoint(0); // Remove the first key point
+
+// Foreach all key points
+for (int i = 0; i < curve.KeyPointsCount; i++)
+{
+    Debug.Log(curve.KeyPoints[i].Position);
+    Debug.Log(curve.KeyPoints[i].LeftHandleLocalPosition);
+    Debug.Log(curve.KeyPoints[i].RightHandleLocalPosition);
+}
+
+// Get the length of the curve
+// This operation is not very heavy, but I advise you to cache the length if you are going to use it
+// many times and when you know that the curve won't change at runtime.
+float length = curve.ApproximateLength; 
+```
+
 Known Issues
 ------------
 
