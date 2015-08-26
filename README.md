@@ -12,8 +12,8 @@ I actually created the plugin with Unity 5.1 and haven't tried to run it with an
 Features
 --------
 
-- Curve modification directly in the Scene View via Control Points with Handles
-- Custom editor for adding, deleting and reordering control points very easily
+- Curve modification directly in the Scene View via Key Points with Handles
+- Custom editor for Adding, Deleting and Reordering Key Points very easily
 - Full Undo/Redo integration
 
 Ways to create a BezierCurve GameObject
@@ -21,7 +21,7 @@ Ways to create a BezierCurve GameObject
 
 - From the Top Menu -> GameObjects -> Create Other -> Bezier Curve
 - Right click in the Hierarchy View -> Create Other -> Bezier Curve
-- Drag the prefab in the Scene (The prefab is located in "Bezier Curves/Assets/Prefabs" folder)
+- Drag the prefab in the Scene (The prefab is located in "Assets/Bezier Curves/Prefabs" folder)
 
 Known Issues
 ------------
