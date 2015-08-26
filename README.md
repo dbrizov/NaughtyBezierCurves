@@ -31,11 +31,11 @@ Code Examples
 float time = 0.5f; // In range [0, 1]
 Vector3 middlePointPosition = curve.Evaluate(time);
 
-// Add key point at the end of the curve
+// Add a key point at the end of the curve
 BezierPoint keyPoint = curve.AddKeyPoint(); // via fast method
 BezierPoint keyPoint = curve.AddKeyPoint(curve.KeyPointsCount); // via specific index
 
-// Remove key point
+// Remove a key point
 bool isRemoved = curve.RemoveKeyPoint(0); // Remove the first key point
 
 // Foreach all key points
