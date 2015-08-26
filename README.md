@@ -1,25 +1,36 @@
 Unity-BezierCurves
 ==================
+
 Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
 
 System Requirements
 -------------------
-Unity 5.1 or later versions.<br /> I actually created the plugin with Unity 5.1 and haven't tried to run it with an older version. If you are using an older version of Unity, feel free to try it out. I don't think there are any reasons for it not to run in Unity 4.6.
+
+Unity 5.1 or later versions.<br />
+I actually created the plugin with Unity 5.1 and haven't tried to run it with an older version. If you are using an older version of Unity, feel free to try it out. I don't think there are any reasons for it not to run in Unity 4.6.
 
 Features
 --------
-1. Curve modification directly in the Scene View via Control Points with Handles <br />
-2. Custom editor for adding, deleting and reordering points very easily <br />
-3. Full Undo/Redo integration <br />
+
+- Curve modification directly in the Scene View via Control Points with Handles
+- Custom editor for adding, deleting and reordering control points very easily
+- Full Undo/Redo integration
 
 Ways to create a BezierCurve GameObject
------------------------------------------
-1. From the Top Menu -> GameObjects -> Create Other -> Bezier Curve <br />
-2. Right click in the Hierarchy View -> Create Other -> Bezier Curve <br />
-3. Drag the prefab in the Scene (The prefab is located in "Bezier Curves/Assets/Prefabs" folder) <br />
+---------------------------------------
+
+- From the Top Menu -> GameObjects -> Create Other -> Bezier Curve
+- Right click in the Hierarchy View -> Create Other -> Bezier Curve
+- Drag the prefab in the Scene (The prefab is located in "Bezier Curves/Assets/Prefabs" folder)
+
+Known Issues
+------------
+
+- There is a bug with the Undo/Redo when reordering control points with the editor. When you want to do an undo, you actually have to press Ctrl+Z / Cmd+Z twice for the operation to be undone.
 
 License
 -------
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Denis Rizov
