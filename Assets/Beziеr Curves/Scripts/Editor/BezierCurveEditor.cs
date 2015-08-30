@@ -65,13 +65,6 @@ namespace BezierCurves
                 {
                     EditorGUI.LabelField(rect, string.Format("Reorderable List | Points: {0}", this.keyPoints.serializedProperty.arraySize));
                 };
-
-            this.keyPoints.onReorderCallback =
-                (ReorderableList list) =>
-                {
-                    //Undo.IncrementCurrentGroup();
-                    //Undo.RegisterCompleteObjectUndo(this.curve, "Reorder Points");
-                };
         }
 
         public override void OnInspectorGUI()
