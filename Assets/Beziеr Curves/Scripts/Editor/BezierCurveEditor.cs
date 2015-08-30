@@ -29,7 +29,7 @@ namespace BezierCurves
 
             BezierCurveEditor.AddDefaultPoints(curve);
 
-            Undo.RegisterCreatedObjectUndo(curve.gameObject, "Create curve");
+            Undo.RegisterCreatedObjectUndo(curve.gameObject, "Create Curve");
 
             Selection.activeGameObject = curve.gameObject;
         }
@@ -69,8 +69,8 @@ namespace BezierCurves
             this.keyPoints.onReorderCallback =
                 (ReorderableList list) =>
                 {
-                    Undo.IncrementCurrentGroup();
-                    Undo.RegisterCompleteObjectUndo(this.curve, "Points reorder");
+                    //Undo.IncrementCurrentGroup();
+                    //Undo.RegisterCompleteObjectUndo(this.curve, "Reorder Points");
                 };
         }
 
@@ -141,7 +141,6 @@ namespace BezierCurves
             {
                 if (GUI.Button(new Rect(rect.width + 14f, rect.y, RemoveButtonWidth, EditorGUIUtility.singleLineHeight), new GUIContent("x")))
                 {
-                    //this.curve.RemoveKeyPointAt(index);
                     RemoveKeyPointAt(this.curve, index);
                 }
             }
@@ -197,10 +196,10 @@ namespace BezierCurves
             }
 
             Undo.IncrementCurrentGroup();
-            Undo.RegisterCreatedObjectUndo(newPoint.gameObject, "Create point");
-            Undo.RegisterCompleteObjectUndo(curve, "Save curve");
+            Undo.RegisterCreatedObjectUndo(newPoint.gameObject, "Create Point");
+            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
             curve.KeyPoints.Insert(index, newPoint);
-            Undo.RegisterCompleteObjectUndo(curve, "Save curve");
+            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
 
             return newPoint;
         }
@@ -215,9 +214,9 @@ namespace BezierCurves
             var point = curve.KeyPoints[index];
 
             Undo.IncrementCurrentGroup();
-            Undo.RegisterCompleteObjectUndo(curve, "Save curve");
+            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
             curve.KeyPoints.RemoveAt(index);
-            Undo.RegisterCompleteObjectUndo(curve, "Save curve");
+            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
             Undo.DestroyObjectImmediate(point.gameObject);
 
             return true;

@@ -83,11 +83,11 @@ namespace BezierCurves
                 if (isTransformUndo)
                 {
                     isTransformUndo = false;
-                    Undo.RegisterCompleteObjectUndo(point.transform, "Moved point");
+                    Undo.RegisterCompleteObjectUndo(point.transform, "Move Point");
                 }
                 else
                 {
-                    Undo.RegisterCompleteObjectUndo(point, "Moved handle");
+                    Undo.RegisterCompleteObjectUndo(point, "Move Point");
                 }
             }
 
@@ -106,8 +106,7 @@ namespace BezierCurves
                 {
                     isUndoRegistered = true;
                     isTransformUndo = true;
-                    Undo.IncrementCurrentGroup();
-                    Undo.RegisterCompleteObjectUndo(point.transform, "Premove point");
+                    Undo.RegisterCompleteObjectUndo(point.transform, "Premove Point");
                 }
 
                 point.Position = newPointPosition;
@@ -127,8 +126,7 @@ namespace BezierCurves
                 if (!isUndoRegistered)
                 {
                     isUndoRegistered = true;
-                    Undo.IncrementCurrentGroup();
-                    Undo.RegisterCompleteObjectUndo(point, "Premove handle");
+                    Undo.RegisterCompleteObjectUndo(point, "Premove Handle");
                 }
 
                 point.LeftHandlePosition = newLeftHandlePosition;
@@ -142,8 +140,7 @@ namespace BezierCurves
                 if (!isUndoRegistered)
                 {
                     isUndoRegistered = true;
-                    Undo.IncrementCurrentGroup();
-                    Undo.RegisterCompleteObjectUndo(point, "Premove handle");
+                    Undo.RegisterCompleteObjectUndo(point, "Premove Handle");
                 }
 
                 point.RightHandlePosition = newRightHandlePosition;
