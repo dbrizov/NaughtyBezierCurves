@@ -52,11 +52,6 @@ for (int i = 0; i < curve.KeyPointsCount; i++)
 float length = curve.ApproximateLength; 
 ```
 
-Known Issues
-------------
-
-- There is a bug with the Undo/Redo when reordering control points with the editor. When you want to do an undo, you actually have to press Ctrl+Z / Cmd+Z twice for the operation to be undone.
-
 License
 -------
 
