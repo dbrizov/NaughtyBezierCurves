@@ -3,8 +3,8 @@
 Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
 
 ![screenshot](http://40.media.tumblr.com/94e63e523c49c08c02a578690aaddd6d/tumblr_ntyj1xOESx1uf0epoo1_640.png)
-![screenshot](https://41.media.tumblr.com/f6ef453da184dbdad1c6ba8869db588b/tumblr_ntyj32TQdU1uf0epoo1_300.png)
-![screenshot](https://36.media.tumblr.com/44d41ec2fdf122f8b58113fc83909346/tumblr_ntyivdkkfH1uf0epoo1_300.png)
+![screenshot](https://41.media.tumblr.com/f6ef453da184dbdad1c6ba8869db588b/tumblr_ntyj32TQdU1uf0epoo1_400.png)
+![screenshot](https://36.media.tumblr.com/44d41ec2fdf122f8b58113fc83909346/tumblr_ntyivdkkfH1uf0epoo1_400.png)
 
 ## System Requirements
 
