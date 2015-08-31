@@ -1,30 +1,29 @@
-Unity-BezierCurves
-==================
+# Unity-BezierCurves
 
 Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
 
-System Requirements
--------------------
+![screenshot](http://40.media.tumblr.com/94e63e523c49c08c02a578690aaddd6d/tumblr_ntyj1xOESx1uf0epoo1_640.png)
+![screenshot](https://41.media.tumblr.com/f6ef453da184dbdad1c6ba8869db588b/tumblr_ntyj32TQdU1uf0epoo1_400.png)
+![screenshot](https://36.media.tumblr.com/44d41ec2fdf122f8b58113fc83909346/tumblr_ntyivdkkfH1uf0epoo1_400.png)
+
+## System Requirements
 
 Unity 5.1 or later versions.<br />
 I actually created the plugin with Unity 5.1 and haven't tried to run it with an older version. If you are using an older version of Unity, feel free to try it out. I don't think there are any reasons for it not to run in Unity 4.6.
 
-Features
---------
+## Features
 
 - Curve modification directly in the Scene View via Key Points with Handles
 - Custom editor for Adding, Deleting and Reordering Key Points very easily
 - Full Undo/Redo integration
 
-Ways to create a BezierCurve GameObject
----------------------------------------
+## Ways to create a BezierCurve GameObject
 
 - From the Top Menu -> GameObjects -> Create Other -> Bezier Curve
 - Right click in the Hierarchy View -> Create Other -> Bezier Curve
 - Drag the prefab in the Scene (The prefab is located in "Assets/Bezier Curves/Prefabs" folder)
 
-Code Examples
--------------
+## Code Examples
 
 ```C#
 // Evaluate a position along the curve at a given time
@@ -52,8 +51,7 @@ for (int i = 0; i < curve.KeyPointsCount; i++)
 float length = curve.ApproximateLength; 
 ```
 
-License
--------
+## License
 
 The MIT License (MIT)
 
