@@ -31,6 +31,12 @@ namespace BezierCurves
         private List<BezierPoint> keyPoints = new List<BezierPoint>();
 
         // Properties
+
+        /// <summary>
+        /// Gets or sets the precision of the curve.
+        /// The precision controls how accurate are the calculation regarding the curve.
+        /// A good value is 25, where the calculations are great and there is not much impact on performance.
+        /// </summary>
         public int Precision
         {
             get
@@ -43,6 +49,9 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets the key points of the curve
+        /// </summary>
         public List<BezierPoint> KeyPoints
         {
             get
@@ -51,6 +60,9 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets the number of key points along the curve
+        /// </summary>
         public int KeyPointsCount
         {
             get
@@ -59,6 +71,10 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets the length of the curve.
+        /// Depends on the precision of the curve.
+        /// </summary>
         public float ApproximateLength
         {
             get
@@ -100,11 +116,21 @@ namespace BezierCurves
         }
 
         // Public Methods
+
+        /// <summary>
+        /// Adds a key point at the end of the curve
+        /// </summary>
+        /// <returns>The new key point</returns>
         public BezierPoint AddKeyPoint()
         {
             return this.AddKeyPointAt(this.KeyPointsCount);
         }
 
+        /// <summary>
+        /// Add a key point at a specified index
+        /// </summary>
+        /// <param name="index">The index at which the key point will be added</param>
+        /// <returns>The new key point</returns>
         public BezierPoint AddKeyPointAt(int index)
         {
             BezierPoint newPoint = new GameObject("Point " + this.keyPoints.Count, typeof(BezierPoint)).GetComponent<BezierPoint>();
@@ -137,6 +163,11 @@ namespace BezierCurves
             return newPoint;
         }
 
+        /// <summary>
+        /// Removes a key point at a specified index
+        /// </summary>
+        /// <param name="index">The index of the key point that will be removed</param>
+        /// <returns>true - if the point was removed, false - otherwise</returns>
         public bool RemoveKeyPointAt(int index)
         {
             if (this.KeyPointsCount < 2)
@@ -152,6 +183,11 @@ namespace BezierCurves
             return true;
         }
 
+        /// <summary>
+        /// Evaluates a position along the curve at a specified normalized time [0, 1]
+        /// </summary>
+        /// <param name="time">The normalized length at which we want to get a position [0, 1]</param>
+        /// <returns>The evaluated Vector3 position</returns>
         public Vector3 Evaluate(float time)
         {
             if (time < 0.01f)
@@ -198,11 +234,17 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Evaluates a cubic bezier curve
+        /// </summary>
         public static Vector3 EvaluateCubicCurve(float time, BezierPoint startPoint, BezierPoint endPoint)
         {
             return EvaluateCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
         }
 
+        /// <summary>
+        /// Evaluates a cubic bezier curve
+        /// </summary>
         public static Vector3 EvaluateCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
         {
             if (time < 0.01f)
@@ -228,11 +270,17 @@ namespace BezierCurves
             return result;
         }
 
+        /// <summary>
+        /// Gets the length of a cubic bezier curve
+        /// </summary>
         public static float GetApproximateLengthOfCubicCurve(BezierPoint startPoint, BezierPoint endPoint, int sampling = 10)
         {
             return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, sampling);
         }
 
+        /// <summary>
+        /// Gets the length of a cubic bezier curve
+        /// </summary>
         public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling = 10)
         {
             float length = 0f;

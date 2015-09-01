@@ -32,10 +32,10 @@ Vector3 middlePointPosition = curve.Evaluate(time);
 
 // Add a key point at the end of the curve
 BezierPoint keyPoint = curve.AddKeyPoint(); // via fast method
-BezierPoint keyPoint = curve.AddKeyPoint(curve.KeyPointsCount); // via specific index
+BezierPoint keyPoint = curve.AddKeyPointAt(curve.KeyPointsCount); // via specific index
 
 // Remove a key point
-bool isRemoved = curve.RemoveKeyPoint(0); // Remove the first key point
+bool isRemoved = curve.RemoveKeyPointAt(0); // Remove the first key point
 
 // Foreach all key points
 for (int i = 0; i < curve.KeyPointsCount; i++)

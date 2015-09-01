@@ -10,9 +10,9 @@ namespace BezierCurves
             Broken
         }
 
-        // Serialized fields
+        // Serializable Fields
         [SerializeField]
-        [Tooltip("The curve the point belongs to")]
+        [Tooltip("The curve that the point belongs to")]
         private BezierCurve curve = null;
 
         [SerializeField]
@@ -25,6 +25,10 @@ namespace BezierCurves
         private Vector3 rightHandleLocalPosition = new Vector3(0.5f, 0f, 0f);
 
         // Properties
+
+        /// <summary>
+        /// Gets or sets the curve that the point belongs to.
+        /// </summary>
         public BezierCurve Curve
         {
             get
@@ -37,6 +41,9 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the type/style of the handle.
+        /// </summary>
         public HandleType HandleStyle
         {
             get
@@ -49,6 +56,9 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the transform.
+        /// </summary>
         public Vector3 Position
         {
             get
@@ -61,6 +71,9 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the transform.
+        /// </summary>
         public Vector3 LocalPosition
         {
             get
@@ -73,6 +86,10 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the local position of the left handle.
+        /// If the HandleStyle is Connected, the local position of the right handle is automaticaly set.
+        /// </summary>
         public Vector3 LeftHandleLocalPosition
         {
             get
@@ -89,6 +106,10 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the local position of the right handle.
+        /// If the HandleType is Connected, the local position of the left handle is automaticaly set.
+        /// </summary>
         public Vector3 RightHandleLocalPosition
         {
             get
@@ -105,6 +126,10 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the left handle.
+        /// If the HandleStyle is Connected, the position of the right handle is automaticaly set.
+        /// </summary>
         public Vector3 LeftHandlePosition
         {
             get
@@ -117,6 +142,10 @@ namespace BezierCurves
             }
         }
 
+        /// <summary>
+        /// Gets or sets the position of the right handle.
+        /// If the HandleType is Connected, the position of the left handle is automaticaly set.
+        /// </summary>
         public Vector3 RightHandlePosition
         {
             get
