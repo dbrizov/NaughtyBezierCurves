@@ -3,9 +3,9 @@ using UnityEditor;
 
 namespace BezierCurves
 {
-    [CustomEditor(typeof(BezierPoint), true)]
+    [CustomEditor(typeof(BezierPoint3D), true)]
     [CanEditMultipleObjects]
-    public class BezierPointEditor : Editor
+    public class BezierPoint3DEditor : Editor
     {
         public const float CircleCapSize = 0.075f;
         public const float RectangeCapSize = 0.1f;
@@ -19,14 +19,14 @@ namespace BezierCurves
         public static bool isUndoRegistered = false;
         public static bool isTransformUndo = false;
 
-        private BezierPoint point;
+        private BezierPoint3D point;
         private SerializedProperty handleType;
         private SerializedProperty leftHandleLocalPosition;
         private SerializedProperty rightHandleLocalPosition;
 
         protected virtual void OnEnable()
         {
-            this.point = (BezierPoint)this.target;
+            this.point = (BezierPoint3D)this.target;
             this.handleType = this.serializedObject.FindProperty("handleType");
             this.leftHandleLocalPosition = this.serializedObject.FindProperty("leftHandleLocalPosition");
             this.rightHandleLocalPosition = this.serializedObject.FindProperty("rightHandleLocalPosition");
@@ -57,19 +57,19 @@ namespace BezierCurves
 
         protected virtual void OnSceneGUI()
         {
-            BezierPointEditor.handleCapSize = BezierPointEditor.CircleCapSize;
-            BezierCurveEditor.DrawPointsSceneGUI(this.point.Curve, this.point);
+            BezierPoint3DEditor.handleCapSize = BezierPoint3DEditor.CircleCapSize;
+            BezierCurve3DEditor.DrawPointsSceneGUI(this.point.Curve, this.point);
 
-            BezierPointEditor.handleCapSize = BezierPointEditor.SphereCapSize;
-            BezierPointEditor.DrawPointSceneGUI(this.point, Handles.DotCap, Handles.SphereCap);
+            BezierPoint3DEditor.handleCapSize = BezierPoint3DEditor.SphereCapSize;
+            BezierPoint3DEditor.DrawPointSceneGUI(this.point, Handles.DotCap, Handles.SphereCap);
         }
 
-        public static void DrawPointSceneGUI(BezierPoint point)
+        public static void DrawPointSceneGUI(BezierPoint3D point)
         {
             DrawPointSceneGUI(point, Handles.RectangleCap, Handles.CircleCap);
         }
 
-        public static void DrawPointSceneGUI(BezierPoint point, Handles.DrawCapFunction drawPointFunc, Handles.DrawCapFunction drawHandleFunc)
+        public static void DrawPointSceneGUI(BezierPoint3D point, Handles.DrawCapFunction drawPointFunc, Handles.DrawCapFunction drawHandleFunc)
         {
             if (MouseButtonDown(0))
             {
@@ -98,7 +98,7 @@ namespace BezierCurves
             // Draw the center of the control point
             Handles.color = Color.yellow;
             Vector3 newPointPosition = Handles.FreeMoveHandle(point.Position, point.transform.rotation,
-                HandleUtility.GetHandleSize(point.Position) * BezierPointEditor.pointCapSize, Vector3.one * 0.5f, drawPointFunc);
+                HandleUtility.GetHandleSize(point.Position) * BezierPoint3DEditor.pointCapSize, Vector3.one * 0.5f, drawPointFunc);
 
             if (point.Position != newPointPosition && isMousePressed)
             {
@@ -119,7 +119,7 @@ namespace BezierCurves
 
             Handles.color = Color.cyan;
             Vector3 newLeftHandlePosition = Handles.FreeMoveHandle(point.LeftHandlePosition, point.transform.rotation,
-                HandleUtility.GetHandleSize(point.LeftHandlePosition) * BezierPointEditor.handleCapSize, Vector3.zero, drawHandleFunc);
+                HandleUtility.GetHandleSize(point.LeftHandlePosition) * BezierPoint3DEditor.handleCapSize, Vector3.zero, drawHandleFunc);
 
             if (point.LeftHandlePosition != newLeftHandlePosition && isMousePressed)
             {
@@ -133,7 +133,7 @@ namespace BezierCurves
             }
             
             Vector3 newRightHandlePosition = Handles.FreeMoveHandle(point.RightHandlePosition, point.transform.rotation,
-                HandleUtility.GetHandleSize(point.RightHandlePosition) * BezierPointEditor.handleCapSize, Vector3.zero, drawHandleFunc);
+                HandleUtility.GetHandleSize(point.RightHandlePosition) * BezierPoint3DEditor.handleCapSize, Vector3.zero, drawHandleFunc);
 
             if (point.RightHandlePosition != newRightHandlePosition && isMousePressed)
             {

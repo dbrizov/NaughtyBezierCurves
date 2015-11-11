@@ -2,7 +2,7 @@
 
 namespace BezierCurves
 {
-    public class BezierPoint : MonoBehaviour
+    public class BezierPoint3D : MonoBehaviour
     {
         public enum HandleType
         {
@@ -13,7 +13,7 @@ namespace BezierCurves
         // Serializable Fields
         [SerializeField]
         [Tooltip("The curve that the point belongs to")]
-        private BezierCurve curve = null;
+        private BezierCurve3D curve = null;
 
         [SerializeField]
         private HandleType handleType = HandleType.Connected;
@@ -29,7 +29,7 @@ namespace BezierCurves
         /// <summary>
         /// Gets or sets the curve that the point belongs to.
         /// </summary>
-        public BezierCurve Curve
+        public BezierCurve3D Curve
         {
             get
             {

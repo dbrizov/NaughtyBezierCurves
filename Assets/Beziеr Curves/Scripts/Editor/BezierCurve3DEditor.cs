@@ -4,21 +4,21 @@ using UnityEditorInternal;
 
 namespace BezierCurves
 {
-    [CustomEditor(typeof(BezierCurve))]
+    [CustomEditor(typeof(BezierCurve3D))]
     [CanEditMultipleObjects]
-    public class BezierCurveEditor : Editor
+    public class BezierCurve3DEditor : Editor
     {
         private const float AddButtonWidth = 80f;
         private const float RemoveButtonWidth = 19f;
 
-        private BezierCurve curve;
+        private BezierCurve3D curve;
         private ReorderableList keyPoints;
         private bool showPoints = true;
 
         [MenuItem("GameObject/Create Other/Bezier Curve")]
         private static void CreateBezeirCurve()
         {
-            BezierCurve curve = new GameObject("Bezier Curve", typeof(BezierCurve)).GetComponent<BezierCurve>();
+            BezierCurve3D curve = new GameObject("Bezier Curve", typeof(BezierCurve3D)).GetComponent<BezierCurve3D>();
             Vector3 position = Vector3.zero;
             if (Camera.current != null)
             {
@@ -27,27 +27,27 @@ namespace BezierCurves
 
             curve.transform.position = position;
 
-            BezierCurveEditor.AddDefaultPoints(curve);
+            BezierCurve3DEditor.AddDefaultPoints(curve);
 
             Undo.RegisterCreatedObjectUndo(curve.gameObject, "Create Curve");
 
             Selection.activeGameObject = curve.gameObject;
         }
 
-        private static void AddDefaultPoints(BezierCurve curve)
+        private static void AddDefaultPoints(BezierCurve3D curve)
         {
-            BezierPoint startPoint = curve.AddKeyPoint();
+            BezierPoint3D startPoint = curve.AddKeyPoint();
             startPoint.LocalPosition = new Vector3(-1f, 0f, 0f);
             startPoint.LeftHandleLocalPosition = new Vector3(-0.35f, -0.35f, 0f);
 
-            BezierPoint endPoint = curve.AddKeyPoint();
+            BezierPoint3D endPoint = curve.AddKeyPoint();
             endPoint.LocalPosition = new Vector3(1f, 0f, 0f);
             endPoint.LeftHandleLocalPosition = new Vector3(-0.35f, 0.35f, 0f);
         }
 
         protected virtual void OnEnable()
         {
-            this.curve = (BezierCurve)this.target;
+            this.curve = (BezierCurve3D)this.target;
             if (curve.KeyPointsCount < 2)
             {
                 while (curve.KeyPointsCount != 0)
@@ -55,7 +55,7 @@ namespace BezierCurves
                     curve.RemoveKeyPointAt(this.curve.KeyPointsCount - 1);
                 }
 
-                BezierCurveEditor.AddDefaultPoints(this.curve);
+                BezierCurve3DEditor.AddDefaultPoints(this.curve);
             }
 
             this.keyPoints = new ReorderableList(this.serializedObject, serializedObject.FindProperty("keyPoints"), true, true, false, false);
@@ -97,7 +97,7 @@ namespace BezierCurves
 
             if (GUILayout.Button("Log Length"))
             {
-                Debug.Log(this.curve.ApproximateLength);
+                Debug.Log(this.curve.GetApproximateLength());
             }
 
             this.serializedObject.ApplyModifiedProperties();
@@ -105,7 +105,7 @@ namespace BezierCurves
 
         protected virtual void OnSceneGUI()
         {
-            BezierCurveEditor.DrawPointsSceneGUI(this.curve);
+            BezierCurve3DEditor.DrawPointsSceneGUI(this.curve);
         }
 
         private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
@@ -139,7 +139,7 @@ namespace BezierCurves
             }
         }
 
-        public static void DrawPointsSceneGUI(BezierCurve curve, BezierPoint exclude = null)
+        public static void DrawPointsSceneGUI(BezierCurve3D curve, BezierPoint3D exclude = null)
         {
             for (int i = 0; i < curve.KeyPointsCount; i++)
             {
@@ -148,12 +148,12 @@ namespace BezierCurves
                     continue;
                 }
 
-                BezierPointEditor.handleCapSize = BezierPointEditor.CircleCapSize;
-                BezierPointEditor.DrawPointSceneGUI(curve.KeyPoints[i]);
+                BezierPoint3DEditor.handleCapSize = BezierPoint3DEditor.CircleCapSize;
+                BezierPoint3DEditor.DrawPointSceneGUI(curve.KeyPoints[i]);
             }
         }
 
-        private static void RenamePoints(BezierCurve curve)
+        private static void RenamePoints(BezierCurve3D curve)
         {
             for (int i = 0; i < curve.KeyPointsCount; i++)
             {
@@ -161,9 +161,9 @@ namespace BezierCurves
             }
         }
 
-        private static BezierPoint AddKeyPointAt(BezierCurve curve, int index)
+        private static BezierPoint3D AddKeyPointAt(BezierCurve3D curve, int index)
         {
-            BezierPoint newPoint = new GameObject("Point " + curve.KeyPointsCount, typeof(BezierPoint)).GetComponent<BezierPoint>();
+            BezierPoint3D newPoint = new GameObject("Point " + curve.KeyPointsCount, typeof(BezierPoint3D)).GetComponent<BezierPoint3D>();
             newPoint.transform.parent = curve.transform;
             newPoint.transform.localRotation = Quaternion.identity;
             newPoint.Curve = curve;
@@ -184,7 +184,7 @@ namespace BezierCurves
                 }
                 else
                 {
-                    newPoint.Position = BezierCurve.EvaluateCubicCurve(0.5f, curve.KeyPoints[index - 1], curve.KeyPoints[index]);
+                    newPoint.Position = BezierCurve3D.EvaluateCubicCurve(0.5f, curve.KeyPoints[index - 1], curve.KeyPoints[index]);
                 }
             }
 
@@ -197,7 +197,7 @@ namespace BezierCurves
             return newPoint;
         }
 
-        private static bool RemoveKeyPointAt(BezierCurve curve, int index)
+        private static bool RemoveKeyPointAt(BezierCurve3D curve, int index)
         {
             if (curve.KeyPointsCount < 2)
             {
