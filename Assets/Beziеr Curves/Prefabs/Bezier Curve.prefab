@@ -130,18 +130,22 @@ MonoBehaviour:
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   startPointColor: {r: 1, g: 0, b: 0, a: 1}
   endPointColor: {r: 0, g: 0, b: 1, a: 1}
-  renderSampling: 50
-  precision: 25
+  segmentsCount: 15
   keyPoints:
   - {fileID: 11438208}
   - {fileID: 11403396}
+  normalizedTime: .5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: normalizedTime
+      value: .649999976
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 103546}

@@ -48,7 +48,12 @@ for (int i = 0; i < curve.KeyPointsCount; i++)
 // Get the length of the curve
 // This operation is not very heavy, but I advise you to cache the length if you are going to use it
 // many times and when you know that the curve won't change at runtime.
-float length = curve.GetApproximateLength(); 
+float length = curve.GetApproximateLength();
+
+// Other methods
+Vector3 tangent = curve.GetTangent(0.5f);
+Vector3 binormal = curve.GetBinormal(0.5f, Vector3.up);
+Vector3 normal = curve.GetNormal(0.5f, Vector3.up);
 ```
 
 ## License

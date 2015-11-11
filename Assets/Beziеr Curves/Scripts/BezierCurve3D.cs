@@ -20,19 +20,17 @@ namespace BezierCurves
 
         [SerializeField]
         [Tooltip("The number of segments that the curve has. Affects calculations and performance")]
-        private int segmentsCount = 25;
+        private int segmentsCount = 15;
 
         [SerializeField]
         [HideInInspector]
         private List<BezierPoint3D> keyPoints = new List<BezierPoint3D>();
 
-        // Properties
+        [SerializeField]
+        [Range(0f, 1f)]
+        float normalizedTime = 0.5f;
 
-        /// <summary>
-        /// Gets or sets the number of segments.
-        /// The segments controls how accurate are the calculation regarding the curve.
-        /// A good value is 25, where the calculations are great and there is not much impact on performance.
-        /// </summary>
+        // Properties        
         public int SegmentsCount
         {
             get
@@ -44,10 +42,7 @@ namespace BezierCurves
                 this.segmentsCount = value;
             }
         }
-
-        /// <summary>
-        /// Gets the key points of the curve
-        /// </summary>
+        
         public List<BezierPoint3D> KeyPoints
         {
             get
@@ -55,17 +50,14 @@ namespace BezierCurves
                 return this.keyPoints;
             }
         }
-
-        /// <summary>
-        /// Gets the number of key points along the curve
-        /// </summary>
+        
         public int KeyPointsCount
         {
             get
             {
-                return this.keyPoints.Count;
+                return this.KeyPoints.Count;
             }
-        }        
+        }
 
         // Unity Methods
         protected virtual void OnDrawGizmos()
@@ -73,23 +65,43 @@ namespace BezierCurves
             if (this.KeyPointsCount > 1)
             {
                 // Draw the curve
-                Gizmos.color = this.curveColor;
                 Vector3 fromPoint = this.Evaluate(0f);
 
                 for (int i = 0; i < this.SegmentsCount; i++)
                 {
                     float time = (i + 1) / (float)this.SegmentsCount;
                     Vector3 toPoint = this.Evaluate(time);
+
+                    // Draw segment
+                    Gizmos.color = this.curveColor;
                     Gizmos.DrawLine(fromPoint, toPoint);
+
                     fromPoint = toPoint;
                 }
 
                 // Draw the start and the end of the curve indicators
                 Gizmos.color = this.startPointColor;
-                Gizmos.DrawSphere(this.keyPoints[0].Position, 0.05f);
+                Gizmos.DrawSphere(this.KeyPoints[0].Position, 0.05f);
 
                 Gizmos.color = this.endPointColor;
-                Gizmos.DrawSphere(this.keyPoints[this.KeyPointsCount - 1].Position, 0.05f);
+                Gizmos.DrawSphere(this.KeyPoints[this.KeyPointsCount - 1].Position, 0.05f);
+
+                // Draw the point at the normalized time
+                Vector3 point = this.Evaluate(this.normalizedTime);
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(point, 0.025f);
+
+                Vector3 tangent = this.GetTangent(this.normalizedTime);
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(point, point + tangent / 2f);
+
+                Vector3 binormal = this.GetBinormal(this.normalizedTime, Vector3.up);
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(point, point + binormal / 2f);
+
+                Vector3 normal = this.GetNormal(this.normalizedTime, Vector3.up);
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(point, point + normal / 2f);
             }
         }
 
@@ -111,7 +123,7 @@ namespace BezierCurves
         /// <returns>The new key point</returns>
         public BezierPoint3D AddKeyPointAt(int index)
         {
-            BezierPoint3D newPoint = new GameObject("Point " + this.keyPoints.Count, typeof(BezierPoint3D)).GetComponent<BezierPoint3D>();
+            BezierPoint3D newPoint = new GameObject("Point " + this.KeyPoints.Count, typeof(BezierPoint3D)).GetComponent<BezierPoint3D>();
             newPoint.Curve = this;
             newPoint.transform.parent = this.transform;
             newPoint.transform.localRotation = Quaternion.identity;
@@ -124,19 +136,19 @@ namespace BezierCurves
             {
                 if (index == 0)
                 {
-                    newPoint.Position = (this.keyPoints[0].Position - this.keyPoints[1].Position).normalized + this.keyPoints[0].Position;
+                    newPoint.Position = (this.KeyPoints[0].Position - this.KeyPoints[1].Position).normalized + this.KeyPoints[0].Position;
                 }
                 else if (index == this.KeyPointsCount)
                 {
-                    newPoint.Position = (this.keyPoints[index - 1].Position - this.keyPoints[index - 2].Position).normalized + this.keyPoints[index - 1].Position;
+                    newPoint.Position = (this.KeyPoints[index - 1].Position - this.KeyPoints[index - 2].Position).normalized + this.KeyPoints[index - 1].Position;
                 }
                 else
                 {
-                    newPoint.Position = BezierCurve3D.EvaluateCubicCurve(0.5f, this.keyPoints[index - 1], this.keyPoints[index]);
+                    newPoint.Position = BezierCurve3D.EvaluateCubicCurve(0.5f, this.KeyPoints[index - 1], this.KeyPoints[index]);
                 }
             }
 
-            this.keyPoints.Insert(index, newPoint);
+            this.KeyPoints.Insert(index, newPoint);
 
             return newPoint;
         }
@@ -153,8 +165,8 @@ namespace BezierCurves
                 return false;
             }
 
-            var point = this.keyPoints[index];
-            this.keyPoints.RemoveAt(index);
+            var point = this.KeyPoints[index];
+            this.KeyPoints.RemoveAt(index);
 
             Destroy(point.gameObject);
 
@@ -170,11 +182,11 @@ namespace BezierCurves
         {
             if (time < 0.01f)
             {
-                return this.keyPoints[0].Position;
+                return this.KeyPoints[0].Position;
             }
             else if (Mathf.Abs(time - 1f) < 0.01f)
             {
-                return this.keyPoints[this.KeyPointsCount - 1].Position;
+                return this.KeyPoints[this.KeyPointsCount - 1].Position;
             }
 
             // The evaluated points is between these two points
@@ -187,16 +199,45 @@ namespace BezierCurves
             return BezierCurve3D.EvaluateCubicCurve(timeRelativeToSegment, startPoint, endPoint);
         }
 
-        /// <summary>
-        /// Gets the length of the curve.
-        /// Depends on the segments of the curve.
-        /// </summary>
+        public Vector3 GetTangent(float time)
+        {
+            BezierPoint3D startPoint;
+            BezierPoint3D endPoint;
+            float timeRelativeToSegment;
+
+            this.GetCubicSegment(time, out startPoint, out endPoint, out timeRelativeToSegment);
+
+            return BezierCurve3D.GetTangentOfCubicCurve(timeRelativeToSegment, startPoint, endPoint);
+        }
+
+        public Vector3 GetBinormal(float time, Vector3 up)
+        {
+            BezierPoint3D startPoint;
+            BezierPoint3D endPoint;
+            float timeRelativeToSegment;
+
+            this.GetCubicSegment(time, out startPoint, out endPoint, out timeRelativeToSegment);
+
+            return BezierCurve3D.GetBinormalOfCubicCurve(timeRelativeToSegment, up, startPoint, endPoint);
+        }
+
+        public Vector3 GetNormal(float time, Vector3 up)
+        {
+            BezierPoint3D startPoint;
+            BezierPoint3D endPoint;
+            float timeRelativeToSegment;
+
+            this.GetCubicSegment(time, out startPoint, out endPoint, out timeRelativeToSegment);
+
+            return BezierCurve3D.GetNormalOfCubicCurve(timeRelativeToSegment, up, startPoint, endPoint);
+        }
+
         public float GetApproximateLength()
         {
             float length = 0;
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.keyPoints[i], this.keyPoints[i + 1], this.SegmentsCount);
+                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.SegmentsCount);
             }
 
             return length;
@@ -215,11 +256,11 @@ namespace BezierCurves
 
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.keyPoints[i], this.keyPoints[i + 1], subCurvesSampling) / approximateLength;
+                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], subCurvesSampling) / approximateLength;
                 if (subCurvePercent + totalPercent > time)
                 {
-                    startPoint = this.keyPoints[i];
-                    endPoint = this.keyPoints[i + 1];
+                    startPoint = this.KeyPoints[i];
+                    endPoint = this.KeyPoints[i + 1];
 
                     break;
                 }
@@ -230,7 +271,8 @@ namespace BezierCurves
             if (endPoint == null)
             {
                 // If the evaluated point is very near to the end of the curve
-                endPoint = this.keyPoints[this.KeyPointsCount - 1];
+                startPoint = this.KeyPoints[this.KeyPointsCount - 2];
+                endPoint = this.KeyPoints[this.KeyPointsCount - 1];
                 timeRelativeToSegment = time;
             }
             else
@@ -238,18 +280,12 @@ namespace BezierCurves
                 timeRelativeToSegment = (time - totalPercent) / subCurvePercent;
             }
         }
-
-        /// <summary>
-        /// Evaluates a cubic bezier curve
-        /// </summary>
+        
         public static Vector3 EvaluateCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
         {
             return EvaluateCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
         }
-
-        /// <summary>
-        /// Evaluates a cubic bezier curve
-        /// </summary>
+        
         public static Vector3 EvaluateCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
         {
             if (time < 0.01f)
@@ -261,31 +297,75 @@ namespace BezierCurves
                 return endPosition;
             }
 
-            float u = 1f - time;
-            float tt = time * time;
-            float uu = u * u;
-            float uuu = uu * u;
-            float ttt = tt * time;
+            float t = time;
+            float u = 1f - t;
+            float t2 = t * t;
+            float u2 = u * u;
+            float u3 = u2 * u;
+            float t3 = t2 * t;
 
-            Vector3 result = uuu * startPosition; // First term
-            result += 3 * uu * time * startTangent; // Second term
-            result += 3 * u * tt * endTangent; // Third term
-            result += ttt * endPosition; // Fourth term
+            Vector3 result =
+                (u3) * startPosition +
+                (3f * u2 * t) * startTangent +
+                (3f * u * t2) * endTangent +
+                (t3) * endPosition;
 
             return result;
         }
 
-        /// <summary>
-        /// Gets the length of a cubic bezier curve
-        /// </summary>
+        public static Vector3 GetTangentOfCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
+        {
+            return GetTangentOfCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
+        }
+
+        public static Vector3 GetTangentOfCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+        {
+            float t = time;
+            float u = 1f - t;
+            float u2 = u * u;
+            float t2 = t * t;
+
+            Vector3 tangent =
+                (-u2) * startPosition +
+                (u * (u - 2 * t)) * startTangent -
+                (t * (t - 2 * u)) * endTangent +
+                (t2) * endPosition;
+
+            return tangent.normalized;
+        }
+
+        public static Vector3 GetBinormalOfCubicCurve(float time, Vector3 up, BezierPoint3D startPoint, BezierPoint3D endPoint)
+        {
+            return GetBinormalOfCubicCurve(time, up, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
+        }
+
+        public static Vector3 GetBinormalOfCubicCurve(float time, Vector3 up, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+        {
+            Vector3 tangent = GetTangentOfCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
+            Vector3 binormal = Vector3.Cross(up, tangent);
+
+            return binormal.normalized;
+        }
+
+        public static Vector3 GetNormalOfCubicCurve(float time, Vector3 up, BezierPoint3D startPoint, BezierPoint3D endPoint)
+        {
+            return GetNormalOfCubicCurve(time, up, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
+        }
+
+        public static Vector3 GetNormalOfCubicCurve(float time, Vector3 up, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+        {
+            Vector3 tangent = GetTangentOfCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
+            Vector3 binormal = GetBinormalOfCubicCurve(time, up, startPosition, endPosition, startTangent, endTangent);
+            Vector3 normal = Vector3.Cross(tangent, binormal);
+
+            return normal.normalized;
+        }
+
         public static float GetApproximateLengthOfCubicCurve(BezierPoint3D startPoint, BezierPoint3D endPoint, int sampling = 10)
         {
             return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, sampling);
         }
-
-        /// <summary>
-        /// Gets the length of a cubic bezier curve
-        /// </summary>
+        
         public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling = 10)
         {
             float length = 0f;
