@@ -26,6 +26,8 @@ I actually created the plugin with Unity 5.1 and haven't tried to run it with an
 ## Code Examples
 
 ```C#
+BezierCurve3D curve = GetComponent<BezierCurve3D>();
+
 // Evaluate a position along the curve at a given time
 float time = 0.5f; // In range [0, 1]
 Vector3 middlePointPosition = curve.Evaluate(time);
@@ -51,9 +53,9 @@ for (int i = 0; i < curve.KeyPointsCount; i++)
 float length = curve.GetApproximateLength();
 
 // Other methods
-Vector3 tangent = curve.GetTangent(0.5f);
-Vector3 binormal = curve.GetBinormal(0.5f, Vector3.up);
-Vector3 normal = curve.GetNormal(0.5f, Vector3.up);
+Vector3 tangent = curve.GetTangent(time);
+Vector3 binormal = curve.GetBinormal(time, Vector3.up);
+Vector3 normal = curve.GetNormal(time, Vector3.up);
 ```
 
 ## License
