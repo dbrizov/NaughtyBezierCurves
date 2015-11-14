@@ -28,9 +28,10 @@ I actually created the plugin with Unity 5.1 and haven't tried to run it with an
 ```C#
 BezierCurve3D curve = GetComponent<BezierCurve3D>();
 
-// Evaluate a position along the curve at a given time
+// Evaluate a position and rotation along the curve at a given time
 float time = 0.5f; // In range [0, 1]
-Vector3 middlePointPosition = curve.Evaluate(time);
+Vector3 position = curve.GetPosition(time);
+Quaterion rotation = curve.GetRotation(time, Vector3.up);
 
 // Add a key point at the end of the curve
 BezierPoint3D keyPoint = curve.AddKeyPoint(); // via fast method

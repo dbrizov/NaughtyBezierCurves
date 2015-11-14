@@ -184,7 +184,7 @@ namespace BezierCurves
                 }
                 else
                 {
-                    newPoint.Position = BezierCurve3D.EvaluateCubicCurve(0.5f, curve.KeyPoints[index - 1], curve.KeyPoints[index]);
+                    newPoint.Position = BezierCurve3D.GetPositionOfCubicCurve(0.5f, curve.KeyPoints[index - 1], curve.KeyPoints[index]);
                 }
             }
 

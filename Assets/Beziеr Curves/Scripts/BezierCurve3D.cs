@@ -65,12 +65,12 @@ namespace BezierCurves
             if (this.KeyPointsCount > 1)
             {
                 // Draw the curve
-                Vector3 fromPoint = this.Evaluate(0f);
+                Vector3 fromPoint = this.GetPosition(0f);
 
                 for (int i = 0; i < this.SegmentsCount; i++)
                 {
                     float time = (i + 1) / (float)this.SegmentsCount;
-                    Vector3 toPoint = this.Evaluate(time);
+                    Vector3 toPoint = this.GetPosition(time);
 
                     // Draw segment
                     Gizmos.color = this.curveColor;
@@ -87,7 +87,7 @@ namespace BezierCurves
                 Gizmos.DrawSphere(this.KeyPoints[this.KeyPointsCount - 1].Position, 0.05f);
 
                 // Draw the point at the normalized time
-                Vector3 point = this.Evaluate(this.normalizedTime);
+                Vector3 point = this.GetPosition(this.normalizedTime);
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawSphere(point, 0.025f);
 
@@ -144,7 +144,7 @@ namespace BezierCurves
                 }
                 else
                 {
-                    newPoint.Position = BezierCurve3D.EvaluateCubicCurve(0.5f, this.KeyPoints[index - 1], this.KeyPoints[index]);
+                    newPoint.Position = BezierCurve3D.GetPositionOfCubicCurve(0.5f, this.KeyPoints[index - 1], this.KeyPoints[index]);
                 }
             }
 
@@ -178,13 +178,13 @@ namespace BezierCurves
         /// </summary>
         /// <param name="time">The normalized length at which we want to get a position [0, 1]</param>
         /// <returns>The evaluated Vector3 position</returns>
-        public Vector3 Evaluate(float time)
+        public Vector3 GetPosition(float time)
         {
             if (time < 0.01f)
             {
                 return this.KeyPoints[0].Position;
             }
-            else if (Mathf.Abs(time - 1f) < 0.01f)
+            else if (time > 0.99f)
             {
                 return this.KeyPoints[this.KeyPointsCount - 1].Position;
             }
@@ -196,7 +196,18 @@ namespace BezierCurves
 
             this.GetCubicSegment(time, out startPoint, out endPoint, out timeRelativeToSegment);
 
-            return BezierCurve3D.EvaluateCubicCurve(timeRelativeToSegment, startPoint, endPoint);
+            return BezierCurve3D.GetPositionOfCubicCurve(timeRelativeToSegment, startPoint, endPoint);
+        }
+
+        public Quaternion GetRotation(float time, Vector3 up)
+        {
+            BezierPoint3D startPoint;
+            BezierPoint3D endPoint;
+            float timeRelativeToSegment;
+
+            this.GetCubicSegment(time, out startPoint, out endPoint, out timeRelativeToSegment);
+
+            return BezierCurve3D.GetRotationOfCubicCurve(timeRelativeToSegment, up, startPoint, endPoint);
         }
 
         public Vector3 GetTangent(float time)
@@ -281,18 +292,18 @@ namespace BezierCurves
             }
         }
         
-        public static Vector3 EvaluateCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
+        public static Vector3 GetPositionOfCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
         {
-            return EvaluateCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
+            return GetPositionOfCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
         }
         
-        public static Vector3 EvaluateCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+        public static Vector3 GetPositionOfCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
         {
             if (time < 0.01f)
             {
                 return startPosition;
             }
-            else if (Mathf.Abs(time - 1f) < 0.01f)
+            else if (time > 0.99f)
             {
                 return endPosition;
             }
@@ -313,6 +324,19 @@ namespace BezierCurves
             return result;
         }
 
+        public static Quaternion GetRotationOfCubicCurve(float time, Vector3 up, BezierPoint3D startPoint, BezierPoint3D endPoint)
+        {
+            return GetRotationOfCubicCurve(time, up, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
+        }
+
+        public static Quaternion GetRotationOfCubicCurve(float time, Vector3 up, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
+        {
+            Vector3 tangent = GetTangentOfCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
+            Vector3 normal = GetNormalOfCubicCurve(time, up, startPosition, endPosition, startTangent, endTangent);
+
+            return Quaternion.LookRotation(tangent, normal);
+        }
+
         public static Vector3 GetTangentOfCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
         {
             return GetTangentOfCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
@@ -327,8 +351,8 @@ namespace BezierCurves
 
             Vector3 tangent =
                 (-u2) * startPosition +
-                (u * (u - 2 * t)) * startTangent -
-                (t * (t - 2 * u)) * endTangent +
+                (u * (u - 2f * t)) * startTangent -
+                (t * (t - 2f * u)) * endTangent +
                 (t2) * endPosition;
 
             return tangent.normalized;
@@ -369,12 +393,12 @@ namespace BezierCurves
         public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling = 10)
         {
             float length = 0f;
-            Vector3 fromPoint = EvaluateCubicCurve(0f, startPosition, endPosition, startTangent, endTangent);
+            Vector3 fromPoint = GetPositionOfCubicCurve(0f, startPosition, endPosition, startTangent, endTangent);
 
             for (int i = 0; i < sampling; i++)
             {
                 float time = (i + 1) / (float)sampling;
-                Vector3 toPoint = EvaluateCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
+                Vector3 toPoint = GetPositionOfCubicCurve(time, startPosition, endPosition, startTangent, endTangent);
                 length += Vector3.Distance(fromPoint, toPoint);
                 fromPoint = toPoint;
             }
