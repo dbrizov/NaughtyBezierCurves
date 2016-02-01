@@ -63,7 +63,7 @@ namespace BezierCurves
             this.keyPoints.drawHeaderCallback =
                 (Rect rect) =>
                 {
-                    EditorGUI.LabelField(rect, string.Format("Reorderable List | Points: {0}", this.keyPoints.serializedProperty.arraySize));
+                    EditorGUI.LabelField(rect, string.Format("Reorderable List | Points: {0}", this.keyPoints.serializedProperty.arraySize), EditorStyles.boldLabel);
                 };
         }
 
