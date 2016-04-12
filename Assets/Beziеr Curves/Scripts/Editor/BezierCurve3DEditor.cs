@@ -73,11 +73,14 @@ namespace BezierCurves
 
             this.serializedObject.Update();
 
+            if (GUILayout.Button("Log Length"))
+            {
+                Debug.Log(this.curve.GetApproximateLength());
+            }
+
             this.showPoints = EditorGUILayout.Foldout(this.showPoints, "Key Points");
             if (this.showPoints)
             {
-                this.keyPoints.DoLayoutList();
-
                 if (GUILayout.Button("Add Point"))
                 {
                     AddKeyPointAt(this.curve, this.curve.KeyPointsCount);
@@ -89,15 +92,7 @@ namespace BezierCurves
                     Selection.activeGameObject = point.gameObject;
                 }
 
-                if (GUILayout.Button("Fix names of points"))
-                {
-                    RenamePoints(this.curve);
-                }
-            }
-
-            if (GUILayout.Button("Log Length"))
-            {
-                Debug.Log(this.curve.GetApproximateLength());
+                this.keyPoints.DoLayoutList();
             }
 
             this.serializedObject.ApplyModifiedProperties();
@@ -191,8 +186,11 @@ namespace BezierCurves
             Undo.IncrementCurrentGroup();
             Undo.RegisterCreatedObjectUndo(newPoint.gameObject, "Create Point");
             Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
+
             curve.KeyPoints.Insert(index, newPoint);
-            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
+            RenamePoints(curve);
+
+            //Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
 
             return newPoint;
         }
@@ -208,8 +206,11 @@ namespace BezierCurves
 
             Undo.IncrementCurrentGroup();
             Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
+
             curve.KeyPoints.RemoveAt(index);
-            Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
+            RenamePoints(curve);
+
+            //Undo.RegisterCompleteObjectUndo(curve, "Save Curve");
             Undo.DestroyObjectImmediate(point.gameObject);
 
             return true;

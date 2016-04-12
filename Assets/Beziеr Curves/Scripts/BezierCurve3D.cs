@@ -20,7 +20,7 @@ namespace BezierCurves
 
         [SerializeField]
         [Tooltip("The number of segments that the curve has. Affects calculations and performance")]
-        private int segmentsCount = 15;
+        private int sampling = 25;
 
         [SerializeField]
         [HideInInspector]
@@ -31,15 +31,15 @@ namespace BezierCurves
         float normalizedTime = 0.5f;
 
         // Properties        
-        public int SegmentsCount
+        public int Sampling
         {
             get
             {
-                return this.segmentsCount;
+                return this.sampling;
             }
             set
             {
-                this.segmentsCount = value;
+                this.sampling = value;
             }
         }
         
@@ -56,52 +56,6 @@ namespace BezierCurves
             get
             {
                 return this.KeyPoints.Count;
-            }
-        }
-
-        // Unity Methods
-        protected virtual void OnDrawGizmos()
-        {
-            if (this.KeyPointsCount > 1)
-            {
-                // Draw the curve
-                Vector3 fromPoint = this.GetPosition(0f);
-
-                for (int i = 0; i < this.SegmentsCount; i++)
-                {
-                    float time = (i + 1) / (float)this.SegmentsCount;
-                    Vector3 toPoint = this.GetPosition(time);
-
-                    // Draw segment
-                    Gizmos.color = this.curveColor;
-                    Gizmos.DrawLine(fromPoint, toPoint);
-
-                    fromPoint = toPoint;
-                }
-
-                // Draw the start and the end of the curve indicators
-                Gizmos.color = this.startPointColor;
-                Gizmos.DrawSphere(this.KeyPoints[0].Position, 0.05f);
-
-                Gizmos.color = this.endPointColor;
-                Gizmos.DrawSphere(this.KeyPoints[this.KeyPointsCount - 1].Position, 0.05f);
-
-                // Draw the point at the normalized time
-                Vector3 point = this.GetPosition(this.normalizedTime);
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawSphere(point, 0.025f);
-
-                Vector3 tangent = this.GetTangent(this.normalizedTime);
-                Gizmos.color = Color.blue;
-                Gizmos.DrawLine(point, point + tangent / 2f);
-
-                Vector3 binormal = this.GetBinormal(this.normalizedTime, Vector3.up);
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(point, point + binormal / 2f);
-
-                Vector3 normal = this.GetNormal(this.normalizedTime, Vector3.up);
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(point, point + normal / 2f);
             }
         }
 
@@ -180,15 +134,6 @@ namespace BezierCurves
         /// <returns>The evaluated Vector3 position</returns>
         public Vector3 GetPosition(float time)
         {
-            if (time < 0.01f)
-            {
-                return this.KeyPoints[0].Position;
-            }
-            else if (time > 0.99f)
-            {
-                return this.KeyPoints[this.KeyPointsCount - 1].Position;
-            }
-
             // The evaluated points is between these two points
             BezierPoint3D startPoint;
             BezierPoint3D endPoint;
@@ -248,7 +193,7 @@ namespace BezierCurves
             float length = 0;
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.SegmentsCount);
+                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling + 1);
             }
 
             return length;
@@ -263,11 +208,11 @@ namespace BezierCurves
             float subCurvePercent = 0f;
             float totalPercent = 0f;
             float approximateLength = this.GetApproximateLength();
-            int subCurvesSampling = (this.SegmentsCount / (this.KeyPointsCount - 1)) + 1;
+            //int subCurvesSampling = (this.Sampling / (this.KeyPointsCount - 1)) + 1;
 
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], subCurvesSampling) / approximateLength;
+                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling) / approximateLength;
                 if (subCurvePercent + totalPercent > time)
                 {
                     startPoint = this.KeyPoints[i];
@@ -284,6 +229,7 @@ namespace BezierCurves
                 // If the evaluated point is very near to the end of the curve
                 startPoint = this.KeyPoints[this.KeyPointsCount - 2];
                 endPoint = this.KeyPoints[this.KeyPointsCount - 1];
+
                 timeRelativeToSegment = time;
             }
             else
@@ -299,15 +245,6 @@ namespace BezierCurves
         
         public static Vector3 GetPositionOfCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
         {
-            if (time < 0.01f)
-            {
-                return startPosition;
-            }
-            else if (time > 0.99f)
-            {
-                return endPosition;
-            }
-
             float t = time;
             float u = 1f - t;
             float t2 = t * t;
@@ -385,12 +322,12 @@ namespace BezierCurves
             return normal.normalized;
         }
 
-        public static float GetApproximateLengthOfCubicCurve(BezierPoint3D startPoint, BezierPoint3D endPoint, int sampling = 10)
+        public static float GetApproximateLengthOfCubicCurve(BezierPoint3D startPoint, BezierPoint3D endPoint, int sampling)
         {
             return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, sampling);
         }
         
-        public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling = 10)
+        public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling)
         {
             float length = 0f;
             Vector3 fromPoint = GetPositionOfCubicCurve(0f, startPosition, endPosition, startTangent, endTangent);
@@ -404,6 +341,51 @@ namespace BezierCurves
             }
 
             return length;
+        }
+
+        protected virtual void OnDrawGizmos()
+        {
+            if (this.KeyPointsCount > 1)
+            {
+                // Draw the curve
+                Vector3 fromPoint = this.GetPosition(0f);
+
+                for (int i = 0; i < this.Sampling; i++)
+                {
+                    float time = (i + 1) / (float)this.Sampling;
+                    Vector3 toPoint = this.GetPosition(time);
+
+                    // Draw segment
+                    Gizmos.color = this.curveColor;
+                    Gizmos.DrawLine(fromPoint, toPoint);
+
+                    fromPoint = toPoint;
+                }
+
+                // Draw the start and the end of the curve indicators
+                Gizmos.color = this.startPointColor;
+                Gizmos.DrawSphere(this.KeyPoints[0].Position, 0.05f);
+
+                Gizmos.color = this.endPointColor;
+                Gizmos.DrawSphere(this.KeyPoints[this.KeyPointsCount - 1].Position, 0.05f);
+
+                // Draw the point at the normalized time
+                Vector3 point = this.GetPosition(this.normalizedTime);
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(point, 0.025f);
+
+                Vector3 tangent = this.GetTangent(this.normalizedTime);
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(point, point + tangent / 2f);
+
+                Vector3 binormal = this.GetBinormal(this.normalizedTime, Vector3.up);
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(point, point + binormal / 2f);
+
+                Vector3 normal = this.GetNormal(this.normalizedTime, Vector3.up);
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(point, point + normal / 2f);
+            }
         }
     }
 }

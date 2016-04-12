@@ -14,11 +14,6 @@ namespace BezierCurves
         public static float pointCapSize = RectangeCapSize;
         public static float handleCapSize = CircleCapSize;
 
-        // Used for undo/redo only
-        public static bool isMousePressed = false;
-        public static bool isUndoRegistered = false;
-        public static bool isTransformUndo = false;
-
         private BezierPoint3D point;
         private SerializedProperty handleType;
         private SerializedProperty leftHandleLocalPosition;
@@ -71,26 +66,6 @@ namespace BezierCurves
 
         public static void DrawPointSceneGUI(BezierPoint3D point, Handles.DrawCapFunction drawPointFunc, Handles.DrawCapFunction drawHandleFunc)
         {
-            if (MouseButtonDown(0))
-            {
-                isMousePressed = true;
-            }
-            else if (MouseButtonUp(0) && isUndoRegistered)
-            {
-                isMousePressed = false;
-                isUndoRegistered = false;
-                
-                if (isTransformUndo)
-                {
-                    isTransformUndo = false;
-                    Undo.RegisterCompleteObjectUndo(point.transform, "Move Point");
-                }
-                else
-                {
-                    Undo.RegisterCompleteObjectUndo(point, "Move Point");
-                }
-            }
-
             // Draw a label for the point
             Handles.color = Color.black;
             Handles.Label(point.Position + new Vector3(0f, HandleUtility.GetHandleSize(point.Position) * 0.4f, 0f), point.gameObject.name);
@@ -100,15 +75,9 @@ namespace BezierCurves
             Vector3 newPointPosition = Handles.FreeMoveHandle(point.Position, point.transform.rotation,
                 HandleUtility.GetHandleSize(point.Position) * BezierPoint3DEditor.pointCapSize, Vector3.one * 0.5f, drawPointFunc);
 
-            if (point.Position != newPointPosition && isMousePressed)
+            if (point.Position != newPointPosition)
             {
-                if (!isUndoRegistered)
-                {
-                    isUndoRegistered = true;
-                    isTransformUndo = true;
-                    Undo.RegisterCompleteObjectUndo(point.transform, "Premove Point");
-                }
-
+                Undo.RegisterCompleteObjectUndo(point.transform, "Move Point");
                 point.Position = newPointPosition;
             }
 
@@ -121,28 +90,18 @@ namespace BezierCurves
             Vector3 newLeftHandlePosition = Handles.FreeMoveHandle(point.LeftHandlePosition, point.transform.rotation,
                 HandleUtility.GetHandleSize(point.LeftHandlePosition) * BezierPoint3DEditor.handleCapSize, Vector3.zero, drawHandleFunc);
 
-            if (point.LeftHandlePosition != newLeftHandlePosition && isMousePressed)
+            if (point.LeftHandlePosition != newLeftHandlePosition)
             {
-                if (!isUndoRegistered)
-                {
-                    isUndoRegistered = true;
-                    Undo.RegisterCompleteObjectUndo(point, "Premove Handle");
-                }
-
+                Undo.RegisterCompleteObjectUndo(point, "Move Left Handle");
                 point.LeftHandlePosition = newLeftHandlePosition;
             }
             
             Vector3 newRightHandlePosition = Handles.FreeMoveHandle(point.RightHandlePosition, point.transform.rotation,
                 HandleUtility.GetHandleSize(point.RightHandlePosition) * BezierPoint3DEditor.handleCapSize, Vector3.zero, drawHandleFunc);
 
-            if (point.RightHandlePosition != newRightHandlePosition && isMousePressed)
+            if (point.RightHandlePosition != newRightHandlePosition)
             {
-                if (!isUndoRegistered)
-                {
-                    isUndoRegistered = true;
-                    Undo.RegisterCompleteObjectUndo(point, "Premove Handle");
-                }
-
+                Undo.RegisterCompleteObjectUndo(point, "Move Right Handle");
                 point.RightHandlePosition = newRightHandlePosition;
             }
         }
