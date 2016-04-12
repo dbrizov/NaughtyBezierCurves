@@ -95,7 +95,7 @@ namespace BezierCurves
                 Undo.RegisterCompleteObjectUndo(point, "Move Left Handle");
                 point.LeftHandlePosition = newLeftHandlePosition;
             }
-            
+
             Vector3 newRightHandlePosition = Handles.FreeMoveHandle(point.RightHandlePosition, point.transform.rotation,
                 HandleUtility.GetHandleSize(point.RightHandlePosition) * BezierPoint3DEditor.handleCapSize, Vector3.zero, drawHandleFunc);
 

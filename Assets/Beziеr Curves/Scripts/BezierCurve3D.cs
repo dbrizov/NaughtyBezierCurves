@@ -42,7 +42,7 @@ namespace BezierCurves
                 this.sampling = value;
             }
         }
-        
+
         public List<BezierPoint3D> KeyPoints
         {
             get
@@ -50,7 +50,7 @@ namespace BezierCurves
                 return this.keyPoints;
             }
         }
-        
+
         public int KeyPointsCount
         {
             get
@@ -193,7 +193,7 @@ namespace BezierCurves
             float length = 0;
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling + 1);
+                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling);
             }
 
             return length;
@@ -230,19 +230,17 @@ namespace BezierCurves
                 startPoint = this.KeyPoints[this.KeyPointsCount - 2];
                 endPoint = this.KeyPoints[this.KeyPointsCount - 1];
 
-                timeRelativeToSegment = time;
+                totalPercent -= subCurvePercent; // We remove the percentage of the last sub-curve
             }
-            else
-            {
-                timeRelativeToSegment = (time - totalPercent) / subCurvePercent;
-            }
+
+            timeRelativeToSegment = (time - totalPercent) / subCurvePercent;
         }
-        
+
         public static Vector3 GetPositionOfCubicCurve(float time, BezierPoint3D startPoint, BezierPoint3D endPoint)
         {
             return GetPositionOfCubicCurve(time, startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition);
         }
-        
+
         public static Vector3 GetPositionOfCubicCurve(float time, Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent)
         {
             float t = time;
@@ -326,7 +324,7 @@ namespace BezierCurves
         {
             return GetApproximateLengthOfCubicCurve(startPoint.Position, endPoint.Position, startPoint.RightHandlePosition, endPoint.LeftHandlePosition, sampling);
         }
-        
+
         public static float GetApproximateLengthOfCubicCurve(Vector3 startPosition, Vector3 endPosition, Vector3 startTangent, Vector3 endTangent, int sampling)
         {
             float length = 0f;
@@ -342,6 +340,8 @@ namespace BezierCurves
 
             return length;
         }
+
+        // Protected Methods
 
         protected virtual void OnDrawGizmos()
         {
