@@ -191,9 +191,10 @@ namespace BezierCurves
         public float GetApproximateLength()
         {
             float length = 0;
+            int subCurveSampling = (this.Sampling / (this.KeyPointsCount - 1)) + 1;
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling);
+                length += BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], subCurveSampling);
             }
 
             return length;
@@ -208,11 +209,11 @@ namespace BezierCurves
             float subCurvePercent = 0f;
             float totalPercent = 0f;
             float approximateLength = this.GetApproximateLength();
-            //int subCurvesSampling = (this.Sampling / (this.KeyPointsCount - 1)) + 1;
+            int subCurveSampling = (this.Sampling / (this.KeyPointsCount - 1)) + 1;
 
             for (int i = 0; i < this.KeyPointsCount - 1; i++)
             {
-                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], this.Sampling) / approximateLength;
+                subCurvePercent = BezierCurve3D.GetApproximateLengthOfCubicCurve(this.KeyPoints[i], this.KeyPoints[i + 1], subCurveSampling) / approximateLength;
                 if (subCurvePercent + totalPercent > time)
                 {
                     startPoint = this.KeyPoints[i];
