@@ -30,7 +30,7 @@ BezierCurve3D curve = GetComponent<BezierCurve3D>();
 
 // Evaluate a position and rotation along the curve at a given time
 float time = 0.5f; // In range [0, 1]
-Vector3 position = curve.GetPosition(time);
+Vector3 position = curve.GetPoint(time);
 Quaterion rotation = curve.GetRotation(time, Vector3.up);
 
 // Get the length of the curve
