@@ -2,8 +2,8 @@
 
 Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
 
-<img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc4.png" alt="screenshot" width="350" />
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc2.png" alt="screenshot" width="350" />
+<img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc4.png" alt="screenshot" width="350" />
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bezier-curve.gif" alt="screenshot" width="350" />
 
 ## System Requirements
