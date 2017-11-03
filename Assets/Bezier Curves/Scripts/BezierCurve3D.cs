@@ -227,11 +227,12 @@ namespace BezierCurves
 
             if (endPoint == null)
             {
-                // If the evaluated point is very near to the end of the curve
+                // If the evaluated point is very near to the end of the curve we are in the last segment
                 startPoint = this.KeyPoints[this.KeyPointsCount - 2];
                 endPoint = this.KeyPoints[this.KeyPointsCount - 1];
 
-                totalPercent -= subCurvePercent; // We remove the percentage of the last sub-curve
+                // We remove the percentage of the last sub-curve
+                totalPercent -= subCurvePercent;
             }
 
             timeRelativeToSegment = (time - totalPercent) / subCurvePercent;

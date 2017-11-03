@@ -56,15 +56,15 @@ namespace BezierCurves
             BezierCurve3DEditor.DrawPointsSceneGUI(this.point.Curve, this.point);
 
             BezierPoint3DEditor.handleCapSize = BezierPoint3DEditor.SphereCapSize;
-            BezierPoint3DEditor.DrawPointSceneGUI(this.point, Handles.DotCap, Handles.SphereCap);
+            BezierPoint3DEditor.DrawPointSceneGUI(this.point, Handles.DotHandleCap, Handles.SphereHandleCap);
         }
 
         public static void DrawPointSceneGUI(BezierPoint3D point)
         {
-            DrawPointSceneGUI(point, Handles.RectangleCap, Handles.CircleCap);
+            DrawPointSceneGUI(point, Handles.RectangleHandleCap, Handles.CircleHandleCap);
         }
 
-        public static void DrawPointSceneGUI(BezierPoint3D point, Handles.DrawCapFunction drawPointFunc, Handles.DrawCapFunction drawHandleFunc)
+        public static void DrawPointSceneGUI(BezierPoint3D point, Handles.CapFunction drawPointFunc, Handles.CapFunction drawHandleFunc)
         {
             // Draw a label for the point
             Handles.color = Color.black;

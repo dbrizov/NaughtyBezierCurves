@@ -8,8 +8,7 @@ Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve Gam
 
 ## System Requirements
 
-Unity 5.1 or later versions.<br />
-I actually created the plugin with Unity 5.1 and haven't tried to run it with an older version. If you are using an older version of Unity, feel free to try it out. I don't think there are any reasons for it not to run in Unity 4.6.
+Unity 2017.1.0 or later versions.
 
 ## Features
 
