@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace BezierCurves
+namespace NaughtyBezierCurves
 {
     public class BezierCurve3D : MonoBehaviour
     {

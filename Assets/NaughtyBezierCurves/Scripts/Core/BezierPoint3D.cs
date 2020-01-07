@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace BezierCurves
+namespace NaughtyBezierCurves
 {
     public class BezierPoint3D : MonoBehaviour
     {

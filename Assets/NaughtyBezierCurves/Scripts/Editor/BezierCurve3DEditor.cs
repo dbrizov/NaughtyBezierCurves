@@ -2,11 +2,11 @@
 using UnityEditor;
 using UnityEditorInternal;
 
-namespace BezierCurves
+namespace NaughtyBezierCurves.Editor
 {
     [CustomEditor(typeof(BezierCurve3D))]
     [CanEditMultipleObjects]
-    public class BezierCurve3DEditor : Editor
+    public class BezierCurve3DEditor : UnityEditor.Editor
     {
         private const float AddButtonWidth = 80f;
         private const float RemoveButtonWidth = 19f;
@@ -15,7 +15,7 @@ namespace BezierCurves
         private ReorderableList keyPoints;
         private bool showPoints = true;
 
-        [MenuItem("GameObject/Create Other/Bezier Curve")]
+        [MenuItem("GameObject/Naughty/Bezier Curve")]
         private static void CreateBezeirCurve()
         {
             BezierCurve3D curve = new GameObject("Bezier Curve", typeof(BezierCurve3D)).GetComponent<BezierCurve3D>();

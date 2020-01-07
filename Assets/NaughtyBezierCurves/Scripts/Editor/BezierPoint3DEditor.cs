@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace BezierCurves
+namespace NaughtyBezierCurves.Editor
 {
     [CustomEditor(typeof(BezierPoint3D), true)]
     [CanEditMultipleObjects]
-    public class BezierPoint3DEditor : Editor
+    public class BezierPoint3DEditor : UnityEditor.Editor
     {
         public const float CircleCapSize = 0.075f;
         public const float RectangeCapSize = 0.1f;
