@@ -15,7 +15,7 @@ namespace NaughtyBezierCurves.Editor
         private ReorderableList keyPoints;
         private bool showPoints = true;
 
-        [MenuItem("GameObject/Naughty/Bezier Curve")]
+        [MenuItem("GameObject/Create Other/Naughty Bezier Curve")]
         private static void CreateBezeirCurve()
         {
             BezierCurve3D curve = new GameObject("Bezier Curve", typeof(BezierCurve3D)).GetComponent<BezierCurve3D>();
