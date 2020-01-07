@@ -1,5 +1,5 @@
 # NaughtyBezierCurves
-NaughtyBezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
+NaughtyBezierCurves is an extension for Unity that provides a BezierCurve GameObject.
 
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bezier-curve.gif" alt="gif" width="350" /><br />
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc4.png" alt="screenshot" width="350" />
@@ -7,6 +7,12 @@ NaughtyBezierCurves is plugin for Unity which provides you with a BezierCurve Ga
 
 ## System Requirements
 Unity 2017.3.0 or later versions.
+
+## Installation
+Add this entry in your **manifest.json**
+```
+"com.dbrizov.naughtybeziercurves": "https://github.com/dbrizov/NaughtyBezierCurves.git#upm"
+```
 
 ## Features
 - Curve modification directly in the Scene View via Key Points with Handles
