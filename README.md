@@ -1,29 +1,24 @@
-# Unity-BezierCurves
-
-Unity-BezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
+# NaughtyBezierCurves
+NaughtyBezierCurves is plugin for Unity which provides you with a BezierCurve GameObject.
 
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bezier-curve.gif" alt="gif" width="350" /><br />
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc4.png" alt="screenshot" width="350" />
 <img src="https://github.com/dbrizov/dbrizov.github.io/blob/master/images/project-images/bezier-curve/bc2.png" alt="screenshot" width="350" />
 
 ## System Requirements
-
-Unity 2017.1.0 or later versions.
+Unity 2017.3.0 or later versions.
 
 ## Features
-
 - Curve modification directly in the Scene View via Key Points with Handles
 - Custom editor for Adding, Deleting and Reordering Key Points very easily
 - Full Undo/Redo integration
 
 ## Ways to create a BezierCurve GameObject
-
 - From the Top Menu -> GameObjects -> Create Other -> Bezier Curve
 - Right click in the Hierarchy View -> Create Other -> Bezier Curve
 - Drag the prefab in the Scene (The prefab is located in "Assets/Bezier Curves/Prefabs" folder)
 
 ## Code Examples
-
 ```C#
 BezierCurve3D curve = GetComponent<BezierCurve3D>();
 
@@ -59,7 +54,6 @@ for (int i = 0; i < curve.KeyPointsCount; i++)
 ```
 
 ## License
-
 The MIT License (MIT)
 
 Copyright (c) 2015 Denis Rizov
