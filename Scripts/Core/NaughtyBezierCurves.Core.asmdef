@@ -1,3 +1,12 @@
-﻿{
-	"name": "NaughtyBezierCurves.Core"
+{
+    "name": "NaughtyBezierCurves.Core",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }
