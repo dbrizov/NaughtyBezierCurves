@@ -8,6 +8,12 @@ NaughtyBezierCurves is plugin for Unity which provides you with a BezierCurve Ga
 ## System Requirements
 Unity 2017.3.0 or later versions.
 
+## Installation
+Add this entry in your **manifest.json**
+```
+"com.dbrizov.naughtybeziercurves": "https://github.com/dbrizov/NaughtyBezierCurves.git#upm"
+```
+
 ## Features
 - Curve modification directly in the Scene View via Key Points with Handles
 - Custom editor for Adding, Deleting and Reordering Key Points very easily
