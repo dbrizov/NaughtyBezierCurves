@@ -1,7 +1,7 @@
 {
     "name": "com.dbrizov.naughtybeziercurves",
     "displayName": "NaughtyBezierCurves",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "unity": "2017.3",
     "description": "NaughtyBezierCurves is an extension for Unity that provides a BezierCurve GameObject",
     "keywords": [ "bezier", "curve" ],
